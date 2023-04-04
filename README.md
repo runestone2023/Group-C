@@ -1,14 +1,14 @@
 # Group-C
 
 ## Names
-- Mai Anh Duc
-- Leon Hejdenberg Philip
-- Linus Olofsson
-- Oskar Pettersson Löfstedt
-- Nguyen Anh Quan
-- Axel Söderberg
-- Leonora Stiernborg
-- Hoang Van Tien
+- Mai Anh Duc - maiduc22
+- Leon Hejdenberg Philip - leonpx
+- Linus Olofsson - kax-y
+- Oskar Pettersson Löfstedt - 00oskpet
+- Nguyen Anh Quan - anhquan410
+- Lifang Zhen -  
+- Leonora Stiernborg - leonorastiernborg
+- Hoang Van Tien - tienchuotbk
 
 ## IDE
 We chose Visual Studio Code as our IDE.
