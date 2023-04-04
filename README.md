@@ -6,7 +6,7 @@
 - Linus Olofsson - kax-y
 - Oskar Pettersson Löfstedt - 00oskpet
 - Nguyen Anh Quan - anhquan410
-- Axel Söderberg - 
+- Lifang Zhen -  
 - Leonora Stiernborg - leonorastiernborg
 - Hoang Van Tien - tienchuotbk
 
