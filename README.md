@@ -1,5 +1,17 @@
 # Group-C
 
+## Build Instructions
+
+### Frontend
+Go to the frontend folder.
+`cd frontend`
+
+Install necessary npm modules.
+`npm install`
+
+Start development server to see what it currently looks like.
+`npm run dev`
+
 ## Names
 - Mai Anh Duc - maiduc22
 - Leon Hejdenberg Philip - leonpx
