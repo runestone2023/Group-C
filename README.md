@@ -18,7 +18,7 @@ Start development server to see what it currently looks like.
 - Linus Olofsson - kax-y
 - Oskar Pettersson Löfstedt - 00oskpet
 - Nguyen Anh Quan - anhquan410
-- Lifang Zhen -  
+- Lifang Zhen - DDDDorwin
 - Leonora Stiernborg - leonorastiernborg
 - Hoang Van Tien - tienchuotbk
 
