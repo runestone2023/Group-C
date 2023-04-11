@@ -53,7 +53,7 @@ To create a dist for use with the backend
 - Linus Olofsson - kax-y
 - Oskar Pettersson Löfstedt - 00oskpet
 - Nguyen Anh Quan - anhquan410
-- Lifang Zhen - DDDDorwin
+- Lifang Zheng - DDDDorwin 
 - Leonora Stiernborg - leonorastiernborg
 - Hoang Van Tien - tienchuotbk
 
