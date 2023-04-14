@@ -5,10 +5,13 @@ use rocket::{
     response::{NamedFile, Redirect},
     routes,
 };
+
 use std::{
     io,
     path::{Path, PathBuf},
 };
+
+mod robot_endpoints;
 
 #[get("/")]
 fn index() -> Redirect {
