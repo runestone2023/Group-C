@@ -1,9 +1,10 @@
-use rocket::{get, response::Stream};
+use rocket::{get, response::stream};
 use serde::{Serialize, Deserialize};
 
 #[derive(Debug, Serialize, Deserialize)]
 enum Action {
     Hello,
+    Rotate,
     Move,
     Beep,
 }
@@ -18,9 +19,4 @@ struct Command {
 #[get("/command")]
 fn serve_command() { // Stream of commands or something that contains commands
     // Provide a buffer of commands for the robot to execute
-}
-
-#[get("/register")]
-fn register() {
-    // Save robot ip to database
 }
