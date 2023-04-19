@@ -1,5 +1,4 @@
 #![feature(decl_macro)]
-
 use rocket::{fs::NamedFile, get, launch, response::Redirect, routes};
 
 use std::{
