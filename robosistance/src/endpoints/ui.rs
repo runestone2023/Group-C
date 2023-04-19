@@ -1,10 +1,10 @@
-use rocket::{get};
-use uuid::Uuid;
+use rocket::{get, post, serde::uuid::Uuid};
+use uuid::Uuid as UuidCrate;
 
 #[get("/register")]
 pub async fn register_robot() -> String {
     // Generate an API key for a new robot
-    Uuid::new_v4().to_string()
+    UuidCrate::new_v4().to_string()
     
     // FIXME: Save the key in the database.
 }
@@ -12,27 +12,20 @@ pub async fn register_robot() -> String {
 
 #[get("/data")]
 pub async fn get_all_data() {
+    // Optional, might not be required
     // Get all data for all robots.
 }
 
 
 #[get("/data/position/<robot_id>")]
-pub async fn get_position(robot_id: &str) {
-    // Maybe make id into a UUID?
+pub async fn get_position(robot_id: Uuid) {
     // Get position for a robot.
 }
 
 
 #[get("/data/history/<robot_id>")]
-pub async fn get_history(robot_id: &str) {
+pub async fn get_history(robot_id: Uuid) {
     // Get event history for a robot.
-}
-
-
-#[get("/command")]
-pub async fn command_info() {
-    // Optional
-    // Instructions on how to use this endpoint (everything starting with 'command').
 }
 
 
@@ -42,23 +35,22 @@ pub async fn hello_test() {
 }
 
 
-#[get("/command/rotate/<robot_id>/<rotation>")]
-pub async fn rotate_robot(robot_id: &str, rotation: f32) {
-    // Rotation's type can be specified further into either a degrees or radians type.
-
-    // Rotate a robot a specified amount of degrees. 
+#[get("/command/move/<robot_id>?<drive_speed>&<rotation_speed>")]
+pub async fn move_robot(robot_id: Uuid, drive_speed: f32, rotation_speed: f32) {
+    // Move a specified robot forward or backward in a direction.
+    // It is also possible to only rotate the robot or only backward/forward.
+    // Rotation and drive speed can be negative.
 }
 
 
-#[get("/command/move/<robot_id>/<forward>")]
-pub async fn move_robot(robot_id: &str, forward: bool) {
-    // Move a specified robot forward or backward.
-}
-
-
-#[get("/command/patrol/<robot_id>")]
-pub async fn init_patrol(robot_id: &str) {
-    // I am unsure how we will create a path for the robot. This endpoint will probably require more parameters such as a map with start and goal or a path.
-    
+#[get("/command/patrol/<robot_id>/<patrol_id>")]
+pub async fn start_patrol(robot_id: Uuid, patrol_id: usize) {
     // Endpoint that will tell the robot to start patrolling a specified path.
+}
+
+#[post("/command/patrol/<robot_id>")]
+pub async fn add_patrol_route(robot_id: Uuid) {
+    // Send list of coordinates which makes up a path between two points (in body)
+
+    // Endpoint to add patrol routes
 }
