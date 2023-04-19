@@ -1,4 +1,5 @@
 import { notifications } from "@mantine/notifications";
+import { RobotStatus } from "../types/models/robot";
 
 export enum notiType {
   SUCCESS = "SUCCESS",
@@ -26,4 +27,16 @@ export const renderNotification = (
     withCloseButton: true,
     autoClose: 1200,
   });
+};
+
+export const getColorByStatus = (string: string | undefined) => {
+  if (!string) return "";
+  switch (string) {
+    case RobotStatus.CONNECTING:
+      return "green";
+    case RobotStatus.NOT_CONNECTED:
+      return "red";
+    case RobotStatus.ERROR:
+      return "yellow";
+  }
 };
