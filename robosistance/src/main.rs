@@ -1,14 +1,12 @@
 #![feature(decl_macro)]
+use rocket::{fs::NamedFile, get, launch, response::Redirect, routes};
 
-use rocket::{
-    get,
-    response::{NamedFile, Redirect},
-    routes,
-};
 use std::{
     io,
     path::{Path, PathBuf},
 };
+
+mod endpoints;
 
 #[get("/")]
 fn index() -> Redirect {
@@ -16,14 +14,13 @@ fn index() -> Redirect {
 }
 
 #[get("/<file..>")]
-fn dist_dir(file: PathBuf) -> io::Result<NamedFile> {
-    NamedFile::open(Path::new("dist/").join(file))
+async fn dist_dir(file: PathBuf) -> io::Result<NamedFile> {
+    NamedFile::open(Path::new("dist/").join(file)).await
 }
 
-fn rocket() -> rocket::Rocket {
-    rocket::ignite().mount("/", routes![index, dist_dir])
-}
-
-fn main() {
-    rocket().launch();
+#[launch]
+fn rocket() -> _ {
+    rocket::build()
+        .mount("/", routes![index, dist_dir])
+        .mount("/api/v1/ui", routes![endpoints::ui::register_robot])
 }
