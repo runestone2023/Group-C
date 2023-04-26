@@ -1,5 +1,7 @@
-use rocket::{get};
+use rocket::response::stream::{EventStream, Event};
+use rocket::{get, serde::json::Json};
 use serde::{Serialize, Deserialize};
+use rocket::tokio::time::{Duration, interval};
 
 #[derive(Debug, Serialize, Deserialize)]
 enum Action {
@@ -24,4 +26,17 @@ fn serve_command() { // Stream of commands or something that contains commands
 #[get("/hello")]
 pub fn hello() -> Json<Command> {
     Json(Command {action: Action::Hello, argument: 0})
+}
+
+#[get("/hellostream")]
+pub fn hello_stream() -> EventStream![] {
+    EventStream! {
+        let mut timer = interval(Duration::from_secs(5));
+        loop {
+            yield Event::json(&Command {action: Action::Hello, argument: 0})
+            .with_comment("Bingus")
+            .event("Hello");
+            timer.tick().await;
+        }
+    }
 }
