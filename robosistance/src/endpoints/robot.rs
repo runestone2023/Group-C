@@ -41,13 +41,7 @@ fn serve_command() { // Stream of commands or something that contains commands
 
 
 #[get("/hello")]
-pub fn hello() -> Json<Command> {
-    Json(Command {action: Action::Hello, argument: 0})
-}
-
-
-#[get("/hellostream")]
-pub fn hello_stream() -> EventStream![] {
+pub fn hello() -> EventStream![] {
     EventStream! {
         let mut timer = interval(Duration::from_secs(5));
         loop {
