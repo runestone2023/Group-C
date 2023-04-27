@@ -1,15 +1,15 @@
-import asyncio
+import uasyncio
 import re
 import json
 
 
-EVENT_REGEX = re.compile(r'event:(.*?)\n')
+EVENT_REGEX = re.compile('event:(.*?)\n')
 
 # NOTE: This is not in line with specification, as data can contain newlines.
-DATA_REGEX = re.compile(r'data:(.*?)\n')
+DATA_REGEX = re.compile('data:(.*?)\n')
 
-ID_REGEX = re.compile(r'id:([0-9]*?)\n')
-RETRY_REGEX = re.compile(r'retry:([0-9]*?)\n')
+ID_REGEX = re.compile('id:([0-9]*?)\n')
+RETRY_REGEX = re.compile('retry:([0-9]*?)\n')
 
 
 class Event:
@@ -33,7 +33,7 @@ class Event:
     
     @staticmethod
     def check_regex(regex, input_string, default):
-        match = re.search(regex, input_string)
+        match = regex.search(input_string)
         return match.group(1) if match is not None else default
 
 
@@ -47,7 +47,7 @@ class EventSource:
         self.READ_SIZE = read_size
         print("Initialized event source")
         
-        asyncio.get_event_loop().create_task(self.event_loop())
+        uasyncio.get_event_loop().create_task(self.event_loop())
 
     def add_event_listener(self, event_name, handler_function):
         self.dispatch_dict[event_name] = handler_function
@@ -60,10 +60,11 @@ class EventSource:
 
     async def event_loop(self):
         GET_STR = "GET {} HTTP/1.0\r\n\r\n".format(self.path)
+        print(GET_STR.encode('utf-8'))
         print("Event loop start")
-        reader, writer = await asyncio.open_connection(self.host, self.port)
+        reader, writer = await uasyncio.open_connection(self.host, self.port)
         print("Event loop connection established")
-        writer.write(GET_STR.encode('utf-8'))
+        await writer.awrite(GET_STR.encode('utf-8'))
         
         while True:
             print("In event loop")

@@ -1,16 +1,18 @@
+#!/usr/bin/env pybricks-micropython
+
 import sys
-sys.path.append('../src')
+sys.path.append('/home/robot/robot/src/')
 
 import socket
-import asyncio
+import uasyncio
 
 from event import Event, EventSource
 
 
 def test_hello():
-    es = EventSource('127.0.0.1', '/api/v1/robot/hello', 8080)
+    es = EventSource('192.168.1.82', '/api/v1/robot/hello', 8080)
     es.add_event_listener('Hello', echo_handler)
-    loop = asyncio.get_event_loop()
+    loop = uasyncio.get_event_loop()
     loop.create_task(hello_heartbeat())
 
 
@@ -21,7 +23,7 @@ def echo_handler(event):
 async def hello_heartbeat():
     while True:
         print("Hello")
-        await asyncio.sleep(2)
+        await uasyncio.sleep(2)
 
 
 def test_internet_connection():
@@ -47,7 +49,7 @@ def test_internet_connection():
 def main():
     test_internet_connection()
 
-    loop = asyncio.get_event_loop()
+    loop = uasyncio.get_event_loop()
     test_hello()
     loop.run_forever()
 
