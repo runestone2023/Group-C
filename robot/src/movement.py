@@ -11,19 +11,23 @@ from pybricks.media.ev3dev import SoundFile, ImageFile
 ev3 = EV3Brick()
 
 
-def hello():
+def hello(event):
     print("Hello\n")
     pass
 
 
-def beep():
+def beep(event):
     print("Beep\n")
     pass
 
 
-def move(drive_speed):
+def move(event):
+    print("Move\n")
+    print(event.data.get("argument"))
     pass
 
 
-def rotate(rotation_speed):
+def rotate(event):
+    print("Rotate\n")
+    print(event.data.get("argument"))
     pass

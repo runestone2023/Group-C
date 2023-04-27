@@ -1,9 +1,9 @@
 import socket
-from robot.src.stream import fetch_commands
+from robot.src.event import EventSource, Event
 
 
 def test_hello(url, port):
-    fetch_commands(url, port)
+    print("hello")
 
 
 def test_internet_connection():

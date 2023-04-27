@@ -23,5 +23,5 @@ fn rocket() -> _ {
     rocket::build()
         .mount("/", routes![index, dist_dir])
         .mount("/api/v1/ui", routes![endpoints::ui::register_robot])
-        .mount("/api/v1/robot", routes![endpoints::robot::hello, endpoints::robot::hello_stream])
+        .mount("/api/v1/robot", routes![endpoints::robot::hello])
 }
