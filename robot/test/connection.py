@@ -10,7 +10,10 @@ from event import Event, EventSource
 
 
 def test_hello():
+    # Establish connection to API
     es = EventSource('192.168.1.82', '/api/v1/robot/hello', 8080)
+
+    # This will add a function that will be run when 'Hello' is received from server
     es.add_event_listener('Hello', echo_handler)
     loop = uasyncio.get_event_loop()
     loop.create_task(hello_heartbeat())
@@ -21,12 +24,15 @@ def echo_handler(event):
 
 
 async def hello_heartbeat():
+    # For testing that async works concurrently as it should
     while True:
         print("Hello")
         await uasyncio.sleep(2)
 
 
 def test_internet_connection():
+    # Test if the EV3 can connect to internet
+
     URL = "example.com"
     PORT = 80
 
