@@ -7,6 +7,11 @@ use std::{
 };
 
 mod endpoints;
+mod models;
+mod db;
+
+use endpoints::db::{get_robot_data};
+use db::mongodb_robot::MongoRepo;
 
 #[get("/")]
 fn index() -> Redirect {
@@ -20,7 +25,10 @@ async fn dist_dir(file: PathBuf) -> io::Result<NamedFile> {
 
 #[launch]
 fn rocket() -> _ {
-    rocket::build()
+    let db = MongoRepo::init();
+    rocket::build().manage(db)
         .mount("/", routes![index, dist_dir])
         .mount("/api/v1/ui", routes![endpoints::ui::register_robot])
+        .mount("/", routes![get_robot_data])
 }
+       
