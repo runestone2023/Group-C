@@ -20,4 +20,4 @@ if __name__ == "__main__":
     robot = DriveBase(left_motor, right_motor, wheel_diameter=50, axle_track=90)
 
     # Start automatic mode
-    test_automatic_movement(robot, obstacle sensor)
+    test_automatic_movement(robot, obstacle_sensor)
