@@ -1,11 +1,19 @@
 #!/usr/bin/env pybricks-micropython
-
-import uasyncio
+from pybricks.hubs import EV3Brick
+from pybricks.ev3devices import (Motor, TouchSensor, ColorSensor,
+                                 InfraredSensor, UltrasonicSensor, GyroSensor)
+from pybricks.parameters import Port, Stop, Direction, Button, Color
+from pybricks.tools import wait, StopWatch, DataLog
+from pybricks.robotics import DriveBase
+from pybricks.media.ev3dev import SoundFile, ImageFile
 
 from src.event import EventSource
 # from src.movement import move, beep
 # from src.patrol import patrol
 from test.connection import test_hello
+
+import control
+import uasyncio
 
 
 def main():
@@ -20,8 +28,22 @@ def main():
     loop.run_forever()
 
 
+def test_robot():
+  # Create object for EV3 and its sensors
+  ev3 = EV3Brick()
+  left_motor = Motor(Port.A)
+  right_motor = Motor(Port.B)
+  obstacle_sensor = UltrasonicSensor(Port.S4)
+
+  # Create object for the drivebase
+  robot = DriveBase(left_motor, right_motor, wheel_diameter=50, axle_track=90)
+
+  # Start automatic mode
+  test_automatic_movement(robot, obstacle_sensor)
+
+
 # Write your program here.
 if __name__ == '__main__':
     print("Starting robot...")
     main()
-    
+    # test_robot()
