@@ -1,8 +1,8 @@
-use crate::endpoints::robot::{Command, TEST_API_KEY, Action};
-use core::fmt;
-use rocket::tokio::sync::broadcast::{channel, error::RecvError, Sender};
+use crate::endpoints::robot::{Action, Command, TEST_API_KEY};
+use rocket::tokio::sync::broadcast::{Sender};
 use rocket::{get, post, serde::uuid::Uuid, State};
 use std::collections::HashMap;
+use std::sync::{RwLock};
 use uuid::Uuid as UuidCrate;
 
 #[get("/register")]
@@ -30,9 +30,18 @@ pub async fn get_history(robot_id: Uuid) {
 }
 
 #[get("/command/hello")]
-pub async fn hello_test(active_queues: &State<HashMap<Uuid, Sender<Command>>>) {
-    // Test endpoint that tells the robot to say hello.
-    let _res = active_queues.get(&TEST_API_KEY).expect("This should always be a send channel.").send(Command {action: Action::Hello, argument: 0});
+pub async fn hello_test(active_queues: &State<RwLock<HashMap<Uuid, Sender<Command>>>>) {
+    //! Test endpoint for testing that the frontend can reach the server.
+    //! The endpoint sends a hello command to the robot.
+    let _res = active_queues
+        .read()
+        .unwrap()
+        .get(&TEST_API_KEY)
+        .expect("This should always be a send channel.")
+        .send(Command {
+            action: Action::Hello,
+            argument: 0,
+        });
 }
 
 #[get("/command/move/<robot_id>?<drive_speed>&<rotation_speed>")]

@@ -1,6 +1,4 @@
 use core::fmt;
-use std::collections::HashMap;
-
 use rocket::response::stream::{Event, EventStream};
 use rocket::serde::{json::Json, uuid::uuid, uuid::Uuid};
 use rocket::tokio::select;
@@ -8,6 +6,9 @@ use rocket::tokio::sync::broadcast::{channel, error::RecvError, Sender};
 use rocket::tokio::time::{interval, Duration};
 use rocket::{get, Shutdown, State};
 use serde::{Deserialize, Serialize};
+
+use std::collections::HashMap;
+use std::sync::{RwLock};
 
 pub const TEST_API_KEY: Uuid = uuid!("67e55044-10b1-426f-9247-bb680e5fe0c8");
 
@@ -38,16 +39,18 @@ pub struct Command {
 
 #[get("/command")]
 pub fn serve_command(
-    active_queues: &State<HashMap<Uuid, Sender<Command>>>,
+    active_queues: &State<RwLock<HashMap<Uuid, Sender<Command>>>>,
     mut end: Shutdown,
 ) -> EventStream![] {
-    // Provide a buffer of commands for the robot to execute
-    
+    //! Provide a buffer of commands for the robot to execute.
+
     let command_queue = channel::<Command>(1024).0;
     let mut receiver = command_queue.subscribe();
 
-    // Unsure how to add the queue to the hashmap of queues
-    // active_queues.insert(TEST_API_KEY, command_queue);
+    // Lock the active queus hashmap before inserting a sender queue of commands
+    let mut locked_hashmap = active_queues.write().unwrap();
+
+    locked_hashmap.insert(TEST_API_KEY, command_queue);
 
     EventStream! {
         loop {
