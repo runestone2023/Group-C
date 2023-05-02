@@ -61,7 +61,7 @@ pub fn establish_connection(
         loop {
             let data: Command;
             let event: String;
-            
+
             select! {
                 cmd = receiver.recv() => match cmd {
                     Ok(cmd) => (data, event) = (cmd, cmd.action.to_string()),

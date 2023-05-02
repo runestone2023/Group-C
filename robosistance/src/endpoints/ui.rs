@@ -1,8 +1,8 @@
 use crate::endpoints::robot::{Action, Command, TEST_API_KEY};
-use rocket::tokio::sync::broadcast::{Sender};
+use rocket::tokio::sync::broadcast::Sender;
 use rocket::{get, post, serde::uuid::Uuid, State};
 use std::collections::HashMap;
-use std::sync::{RwLock};
+use std::sync::RwLock;
 use uuid::Uuid as UuidCrate;
 
 #[get("/register")]
@@ -30,13 +30,14 @@ pub async fn get_history(robot_id: Uuid) {
 }
 
 #[get("/command/hello")]
-pub async fn hello_test(active_queues: &State<RwLock<HashMap<Uuid, Sender<Command>>>>) -> Option<()> {
+pub async fn hello_test(
+    active_queues: &State<RwLock<HashMap<Uuid, Sender<Command>>>>,
+) -> Option<()> {
     //! Test endpoint for testing that the frontend can reach the server.
     //! The endpoint sends a hello command to the robot.
     let _res = active_queues
         .read()
         .unwrap()
-
         // TODO: Get the robot id given in the request instead
         .get(&TEST_API_KEY)?
         .send(Command {
@@ -56,26 +57,28 @@ pub async fn move_robot(robot_id: Uuid, drive_speed: f32, rotation_speed: f32) {
 // TODO: #[get("/command/patrol/<robot_id>/<patrol_id>")]
 // pub async fn start_patrol(robot_id: Uuid, patrol_id: usize) {
 #[get("/command/patrol/<robot_id>")]
-pub async fn start_patrol(active_queues: &State<RwLock<HashMap<Uuid, Sender<Command>>>>, robot_id: i32) -> Option<()> {
+pub async fn start_patrol(
+    active_queues: &State<RwLock<HashMap<Uuid, Sender<Command>>>>,
+    robot_id: i32,
+) -> Option<()> {
     //! Endpoint that will tell the robot to start patrolling a specified path.
     let _res = active_queues
-    .read()
-    .unwrap()
-    
-    // TODO: Get the robot id given in the request instead
-    .get(&TEST_API_KEY)?
-    .send(Command {
-        action: Action::Patrol,
+        .read()
+        .unwrap()
+        // TODO: Get the robot id given in the request instead
+        .get(&TEST_API_KEY)?
+        .send(Command {
+            action: Action::Patrol,
 
-        // TODO: Send a map with a route somehow
-        argument: 0,
-    });
-Some(()) // FIXME: Handle errors better
+            // TODO: Send a map with a route somehow
+            argument: 0,
+        });
+    Some(()) // FIXME: Handle errors better
 }
 
 #[post("/command/patrol/<robot_id>")]
 pub async fn add_patrol_route(robot_id: Uuid) {
     //! Endpoint to add patrol routes
-    
+
     // Send list of coordinates which makes up a path between two points (in body).
 }
