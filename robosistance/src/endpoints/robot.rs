@@ -18,6 +18,7 @@ pub enum Action {
     Rotate,
     Move,
     Beep,
+    Patrol,
 }
 
 impl fmt::Display for Action {
@@ -27,6 +28,7 @@ impl fmt::Display for Action {
             Action::Rotate => write!(f, "Rotate"),
             Action::Move => write!(f, "Move"),
             Action::Beep => write!(f, "Beep"),
+            Action::Patrol => write!(f, "Patrol"),
         }
     }
 }

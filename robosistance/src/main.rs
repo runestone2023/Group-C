@@ -1,9 +1,10 @@
 #![feature(decl_macro)]
-use endpoints::robot::Command;
-use rocket::tokio::sync::broadcast::{Sender};
+use endpoints::robot::{establish_connection, hello, Command};
+use endpoints::ui::{hello_test, register_robot, start_patrol};
+use rocket::tokio::sync::broadcast::Sender;
 use rocket::{fs::NamedFile, get, launch, response::Redirect, routes, serde::uuid::Uuid};
 
-use std::sync::{RwLock};
+use std::sync::RwLock;
 use std::{
     collections::HashMap,
     io,
@@ -29,7 +30,10 @@ fn rocket() -> _ {
 
     rocket::build()
         .mount("/", routes![index, dist_dir])
-        .mount("/api/v1/ui", routes![endpoints::ui::register_robot, endpoints::ui::hello_test])
-        .mount("/api/v1/robot", routes![endpoints::robot::hello, endpoints::robot::establish_connection])
+        .mount(
+            "/api/v1/ui",
+            routes![register_robot, hello_test, start_patrol],
+        )
+        .mount("/api/v1/robot", routes![hello, establish_connection])
         .manage(mutex_locked_hashmap)
 }
