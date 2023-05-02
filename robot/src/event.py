@@ -2,7 +2,6 @@ import uasyncio
 import re
 import json
 
-
 EVENT_REGEX = re.compile('event:(.*?)\n')
 
 # NOTE: This is not in line with specification, as data can contain newlines.
@@ -18,7 +17,7 @@ class Event:
         self.data = data
         self.id = id
         self.retry = retry
-    
+
     def __repr__(self):
         return "{}({}, {}, {}, {})".format(self.__class__.__name__, self.event, self.data, self.id, self.retry)
 
@@ -30,7 +29,7 @@ class Event:
         retry = cls.check_regex(RETRY_REGEX, input_string, None)
 
         return cls(event, data, id, retry)
-    
+
     @staticmethod
     def check_regex(regex, input_string, default):
         match = regex.search(input_string)
@@ -42,34 +41,33 @@ class EventSource:
         self.host = host
         self.port = port
         self.path = path
-        
+
         self.dispatch_dict = {}
         self.READ_SIZE = read_size
-        print("Initialized event source")
-        
-        uasyncio.get_event_loop().create_task(self.event_loop())
+        self.loop = uasyncio.get_event_loop()
+        # FIXME: Try to move to actual logging library.
+        print("Initialized event source.")
+
+        self.loop.create_task(self.event_loop())
 
     def add_event_listener(self, event_name, handler_function):
         self.dispatch_dict[event_name] = handler_function
 
-
     def dispatch(self, event):
         action = self.dispatch_dict.get(event.event, id)
-        action(event)
-
+        self.loop.create_task(action(event))
 
     async def event_loop(self):
         GET_STR = "GET {} HTTP/1.0\r\n\r\n".format(self.path)
         print(GET_STR.encode('utf-8'))
-        print("Event loop start")
         reader, writer = await uasyncio.open_connection(self.host, self.port)
-        print("Event loop connection established")
+        # FIXME: Try to move to actual logging library.
+        print("Connection to server established.")
         await writer.awrite(GET_STR.encode('utf-8'))
-        
+
         while True:
-            print("In event loop")
             buf = await reader.read(self.READ_SIZE)
-            
+
             if buf != b'' and not buf.startswith(b':'):
                 event = Event.parse_from_string(buf.decode('utf-8'))
                 print(event)
