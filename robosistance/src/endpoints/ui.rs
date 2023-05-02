@@ -33,7 +33,6 @@ pub async fn get_history(robot_id: Uuid) {
 pub async fn hello_test(active_queues: &State<RwLock<HashMap<Uuid, Sender<Command>>>>) -> Option<()>{
     //! Test endpoint for testing that the frontend can reach the server.
     //! The endpoint sends a hello command to the robot.
-    print!("Hellooo");
     let _res = active_queues
         .read()
         .unwrap()
