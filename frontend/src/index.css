@@ -3,3 +3,8 @@
   padding: 0;
   box-sizing: border-box;
 }
+
+.patrol-button-container, .move-controller-container {
+  display: flex;
+  justify-content: center;
+}
