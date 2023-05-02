@@ -28,7 +28,7 @@ fn rocket() -> _ {
     let db = MongoRepo::init();
     rocket::build().manage(db)
         .mount("/", routes![index, dist_dir])
-        .mount("/api/v1/ui", routes![endpoints::ui::register_robot])
-        .mount("/", routes![get_robot_data])
+        .mount("/api/v1/ui", routes![endpoints::ui::register_robot, get_robot_data])
+        .mount("/api/v1/robot", routes![endpoints::robot::hello])
 }
        
