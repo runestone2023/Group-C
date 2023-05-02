@@ -62,6 +62,7 @@ class EventSource:
         GET_STR = "GET {} HTTP/1.0\r\n\r\n".format(self.path)
         print(GET_STR.encode('utf-8'))
         print("Event loop start")
+        print("。。。。")
         reader, writer = await uasyncio.open_connection(self.host, self.port)
         print("Event loop connection established")
         await writer.awrite(GET_STR.encode('utf-8'))
