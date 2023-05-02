@@ -1,7 +1,11 @@
 #![feature(decl_macro)]
-use rocket::{fs::NamedFile, get, launch, response::Redirect, routes};
+use endpoints::robot::Command;
+use rocket::tokio::sync::broadcast::{Sender};
+use rocket::{fs::NamedFile, get, launch, response::Redirect, routes, serde::uuid::Uuid};
 
+use std::sync::{RwLock};
 use std::{
+    collections::HashMap,
     io,
     path::{Path, PathBuf},
 };
@@ -20,8 +24,12 @@ async fn dist_dir(file: PathBuf) -> io::Result<NamedFile> {
 
 #[launch]
 fn rocket() -> _ {
+    let robot_streams: HashMap<Uuid, Sender<Command>> = HashMap::new();
+    let mutex_locked_hashmap: RwLock<HashMap<Uuid, Sender<Command>>> = RwLock::new(robot_streams);
+
     rocket::build()
         .mount("/", routes![index, dist_dir])
-        .mount("/api/v1/ui", routes![endpoints::ui::register_robot])
-        .mount("/api/v1/robot", routes![endpoints::robot::hello])
+        .mount("/api/v1/ui", routes![endpoints::ui::register_robot, endpoints::ui::hello_test])
+        .mount("/api/v1/robot", routes![endpoints::robot::hello, endpoints::robot::establish_connection])
+        .manage(mutex_locked_hashmap)
 }
