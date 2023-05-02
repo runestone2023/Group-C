@@ -30,6 +30,6 @@ fn rocket() -> _ {
     rocket::build()
         .mount("/", routes![index, dist_dir])
         .mount("/api/v1/ui", routes![endpoints::ui::register_robot, endpoints::ui::hello_test])
-        .mount("/api/v1/robot", routes![endpoints::robot::hello])
+        .mount("/api/v1/robot", routes![endpoints::robot::hello, endpoints::robot::establish_connection])
         .manage(mutex_locked_hashmap)
 }

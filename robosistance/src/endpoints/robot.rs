@@ -38,11 +38,11 @@ pub struct Command {
 }
 
 #[get("/command")]
-pub fn serve_command(
+pub fn establish_connection(
     active_queues: &State<RwLock<HashMap<Uuid, Sender<Command>>>>,
     mut end: Shutdown,
 ) -> EventStream![] {
-    //! Provide a buffer of commands for the robot to execute.
+    //! Establish connection with the robot and send any commands that are added to a buffer of commands to the robot.
 
     // Initialise a send queue and subscribe to that queue
     let command_queue: Sender<Command> = channel::<Command>(1024).0;

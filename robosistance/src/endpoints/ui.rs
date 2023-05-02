@@ -30,19 +30,19 @@ pub async fn get_history(robot_id: Uuid) {
 }
 
 #[get("/command/hello")]
-pub async fn hello_test(active_queues: &State<RwLock<HashMap<Uuid, Sender<Command>>>>) {
+pub async fn hello_test(active_queues: &State<RwLock<HashMap<Uuid, Sender<Command>>>>) -> Option<()>{
     //! Test endpoint for testing that the frontend can reach the server.
     //! The endpoint sends a hello command to the robot.
     print!("Hellooo");
     let _res = active_queues
         .read()
         .unwrap()
-        .get(&TEST_API_KEY)
-        .expect("This should always be a send channel.")
+        .get(&TEST_API_KEY)?
         .send(Command {
             action: Action::Hello,
             argument: 0,
         });
+    Some(()) //FIXME: This could be better when the implementation is compleated.
 }
 
 #[get("/command/move/<robot_id>?<drive_speed>&<rotation_speed>")]
