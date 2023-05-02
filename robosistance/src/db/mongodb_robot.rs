@@ -30,7 +30,7 @@ impl MongoRepo {
             .col
             .find(None, None)
             .ok()
-            .expect("Error getting list of users");
+            .expect("Error getting list of robot data");
         let robot_data = cursors.map(|doc| doc.unwrap()).collect();
         Ok(robot_data)
     }
