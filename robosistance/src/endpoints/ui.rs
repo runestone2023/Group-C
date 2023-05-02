@@ -55,8 +55,8 @@ pub async fn move_robot(robot_id: Uuid, drive_speed: f32, rotation_speed: f32) {
 
 // TODO: #[get("/command/patrol/<robot_id>/<patrol_id>")]
 // pub async fn start_patrol(robot_id: Uuid, patrol_id: usize) {
-#[get("/command/patrol")]
-pub async fn start_patrol(active_queues: &State<RwLock<HashMap<Uuid, Sender<Command>>>>) -> Option<()> {
+#[get("/command/patrol?<robot_id>")]
+pub async fn start_patrol(active_queues: &State<RwLock<HashMap<Uuid, Sender<Command>>>>, robot_id: Uuid) -> Option<()> {
     //! Endpoint that will tell the robot to start patrolling a specified path.
     let _res = active_queues
     .read()
@@ -70,7 +70,7 @@ pub async fn start_patrol(active_queues: &State<RwLock<HashMap<Uuid, Sender<Comm
         // TODO: Send a map with a route somehow
         argument: 0,
     });
-Some(()) //FIXME: Handle errors better
+Some(()) // FIXME: Handle errors better
 }
 
 #[post("/command/patrol/<robot_id>")]
