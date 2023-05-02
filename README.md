@@ -62,3 +62,6 @@ We chose Visual Studio Code as our IDE.
 
 ## Communication
 We have chosen to use mostly Discord for communication.
+
+## Review process
+Pull requests without sufficient reviews will be force-merged after two days.
