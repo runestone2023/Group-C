@@ -5,5 +5,5 @@ use serde::{Deserialize, Serialize};
 pub struct RobotData {
     #[serde(rename = "id", skip_serializing_if = "Option::is_none")]
     pub id: Option<ObjectId>,
-    pub Position: String
+    pub position: String,
 }

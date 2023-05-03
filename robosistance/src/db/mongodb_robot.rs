@@ -1,13 +1,13 @@
 use std::env;
 extern crate dotenv;
+use super::robot_model::RobotData;
 use dotenv::dotenv;
 
+//use crate::models::robot_model::RobotData;
 use mongodb::{
-    bson::{extjson::de::Error},
-    results::{ InsertOneResult},
+    bson::extjson::de::Error,
     sync::{Client, Collection},
 };
-use crate::models::robot_model::RobotData;
 
 pub struct MongoRepo {
     col: Collection<RobotData>,
@@ -34,5 +34,4 @@ impl MongoRepo {
         let robot_data = cursors.map(|doc| doc.unwrap()).collect();
         Ok(robot_data)
     }
-
 }
