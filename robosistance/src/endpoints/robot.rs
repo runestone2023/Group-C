@@ -12,12 +12,14 @@ use std::sync::RwLock;
 
 pub const TEST_API_KEY: Uuid = uuid!("67e55044-10b1-426f-9247-bb680e5fe0c8");
 
-#[derive(Clone, Debug, Serialize, Deserialize)]
+#[derive(Copy, Clone, Debug, Serialize, Deserialize)]
 pub enum Action {
     Hello,
     Rotate,
     Move,
     Beep,
+    Patrol,
+    Closed,
 }
 
 impl fmt::Display for Action {
@@ -27,11 +29,13 @@ impl fmt::Display for Action {
             Action::Rotate => write!(f, "Rotate"),
             Action::Move => write!(f, "Move"),
             Action::Beep => write!(f, "Beep"),
+            Action::Patrol => write!(f, "Patrol"),
+            Action::Closed => write!(f, "Closed"),
         }
     }
 }
 
-#[derive(Clone, Debug, Serialize, Deserialize)]
+#[derive(Copy, Clone, Debug, Serialize, Deserialize)]
 pub struct Command {
     pub action: Action,
     pub argument: u64, // FIXME: This should be some sort of generic byte string
@@ -55,16 +59,19 @@ pub fn establish_connection(
 
     EventStream! {
         loop {
+            let data: Command;
+            let event: String;
+
             select! {
                 cmd = receiver.recv() => match cmd {
-                    Ok(cmd) => cmd,
+                    Ok(cmd) => (data, event) = (cmd, cmd.action.to_string()),
                     Err(RecvError::Closed) => break,
                     Err(RecvError::Lagged(_)) => continue,
                 },
                 _ = &mut end => break,
             };
 
-            yield Event::data("").event(Action::Hello.to_string());
+            yield Event::json(&data).event(event);
         }
     }
 }
