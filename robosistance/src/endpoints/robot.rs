@@ -1,6 +1,6 @@
 use core::fmt;
 use rocket::response::stream::{Event, EventStream};
-use rocket::serde::{json::Json, uuid::uuid, uuid::Uuid};
+use rocket::serde::{uuid::uuid, uuid::Uuid};
 use rocket::tokio::select;
 use rocket::tokio::sync::broadcast::{channel, error::RecvError, Receiver, Sender};
 use rocket::tokio::time::{interval, Duration};
