@@ -11,7 +11,7 @@ def main():
     # Change IP to the server's IP
     es = EventSource('127.0.0.1', '/api/v1/robot/command', 8080)
     robot = Robot()
-    es.add_event_listener('Patrol', robot.patrol())
+    es.add_event_listener('Patrol', robot.patrol)
 
     loop = uasyncio.get_event_loop()
     # test_hello()

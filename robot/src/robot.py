@@ -21,10 +21,10 @@ class Robot:
     def obstacle_in_front(self):
         return self.ultrasonic_sensor.distance() > 300
 
-    async def patrol(self):
+    async def patrol(self, _):
         while True:
             # Begin driving forward at 200 millimeters per second.
-            self.drivebase.drive(200, 0)
+            self.drive_base.drive(200, 0)
 
             # Wait until an obstacle is detected. This is done by repeatedly
             # doing nothing (waiting for 10 milliseconds) while the measured
@@ -33,7 +33,7 @@ class Robot:
                 uasyncio.wait_ms(10)
 
             # Drive backward for 300 millimeters.
-            self.drivebase.straight(-300)
+            self.drive_base.straight(-300)
 
             # Turn around by 120 degrees
-            self.drivebase.turn(120)
+            self.drive_base.turn(120)

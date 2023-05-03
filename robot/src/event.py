@@ -54,8 +54,13 @@ class EventSource:
         self.dispatch_dict[event_name] = handler_function
 
     def dispatch(self, event):
-        action = self.dispatch_dict.get(event.event, id)
-        self.loop.create_task(action(event))
+        try: 
+            action = self.dispatch_dict[event.event]
+            self.loop.create_task(action(event))
+        except KeyError as e:
+            # FIXME: Try to move to actual logging library.
+            print(e)
+
 
     async def event_loop(self):
         GET_STR = "GET {} HTTP/1.0\r\n\r\n".format(self.path)
