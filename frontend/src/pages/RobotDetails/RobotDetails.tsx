@@ -26,7 +26,7 @@ const RobotDetails = () => {
     console.log("Send potral loading");
     setPotralLoading(true);
     const result = await fetch(`http://127.0.0.1:8080/api/v1/ui/command/patrol/${params.robotId}`, {
-      method: "POST",
+      method: "GET",
       headers: {
         Accept: 'application/json',
         'Content-Type': 'application/json',
