@@ -3,10 +3,14 @@ def check_for_obstacle(obstacle_sensor):
     while obstacle_sensor.distance() > 300:
             wait(10)
 
-def test_automatic_movement(robot, obstacle_sensor):
+def test_automatic_movement(robot, obstacle_sensor,gyro_sensor):
+    #Gyro Straight Proportional Constant
+    GSPK = 2.5 
+    gyro_sensor.reset_angle(0)
     while True:
-        # Begin driving forward at 200 millimeters per second.
-        robot.drive(200, 0)
+        correction = (0-gyro_sensor.angle())*GSPK
+        # Begin driving straight forward at 200 millimeters per second.
+        robot.drive(200, correction)
     
         # Wait until an obstacle is detected. This is done by repeatedly
         # doing nothing (waiting for 10 milliseconds) while the measured

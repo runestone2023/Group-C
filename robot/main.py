@@ -14,6 +14,7 @@ from test.connection import test_hello
 
 import control
 import uasyncio
+import turning
 
 
 def main():
@@ -34,12 +35,13 @@ def test_robot():
   left_motor = Motor(Port.A)
   right_motor = Motor(Port.B)
   obstacle_sensor = UltrasonicSensor(Port.S4)
+  gyro_sensor  = GyroSensor(Port.S3)
 
   # Create object for the drivebase
   robot = DriveBase(left_motor, right_motor, wheel_diameter=50, axle_track=90)
 
   # Start automatic mode
-  test_automatic_movement(robot, obstacle_sensor)
+  test_automatic_movement(robot, obstacle_sensor,gyro_sensor)
 
 
 # Write your program here.
