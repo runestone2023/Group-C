@@ -13,32 +13,27 @@ use std::sync::RwLock;
 pub const TEST_API_KEY: Uuid = uuid!("67e55044-10b1-426f-9247-bb680e5fe0c8");
 
 #[derive(Copy, Clone, Debug, Serialize, Deserialize)]
-pub enum Action {
+pub enum Command {
     Hello,
-    Rotate,
-    Move,
+    Rotate(f32),
+    Move(u64),
     Beep,
-    Patrol,
+    Patrol(usize), // As an id.
     Closed,
 }
 
-impl fmt::Display for Action {
+impl fmt::Display for Command {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        use Command::*;
         match self {
-            Action::Hello => write!(f, "Hello"),
-            Action::Rotate => write!(f, "Rotate"),
-            Action::Move => write!(f, "Move"),
-            Action::Beep => write!(f, "Beep"),
-            Action::Patrol => write!(f, "Patrol"),
-            Action::Closed => write!(f, "Closed"),
+            Hello => write!(f, "Hello"),
+            Rotate(_) => write!(f, "Rotate"),
+            Move(_) => write!(f, "Move"),
+            Beep => write!(f, "Beep"),
+            Patrol(_) => write!(f, "Patrol"),
+            Closed => write!(f, "Closed"),
         }
     }
-}
-
-#[derive(Copy, Clone, Debug, Serialize, Deserialize)]
-pub struct Command {
-    pub action: Action,
-    pub argument: u64, // FIXME: This should be some sort of generic byte string
 }
 
 #[get("/command")]
@@ -64,7 +59,7 @@ pub fn establish_connection(
 
             select! {
                 cmd = receiver.recv() => match cmd {
-                    Ok(cmd) => (data, event) = (cmd, cmd.action.to_string()),
+                    Ok(cmd) => (data, event) = (cmd, cmd.to_string()),
                     Err(RecvError::Closed) => break,
                     Err(RecvError::Lagged(_)) => continue,
                 },
@@ -81,7 +76,7 @@ pub fn hello() -> EventStream![] {
     EventStream! {
         let mut timer = interval(Duration::from_secs(5));
         loop {
-            yield Event::data("").event(Action::Hello.to_string());
+            yield Event::data("").event(Command::Hello.to_string());
             timer.tick().await;
         }
     }

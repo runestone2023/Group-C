@@ -1,4 +1,4 @@
-use crate::endpoints::robot::{Action, Command, TEST_API_KEY};
+use crate::endpoints::robot::{Command, TEST_API_KEY};
 use rocket::tokio::sync::broadcast::Sender;
 use rocket::{get, post, serde::uuid::Uuid, State};
 use std::collections::HashMap;
@@ -40,10 +40,7 @@ pub async fn hello_test(
         .unwrap()
         // TODO: Get the robot id given in the request instead
         .get(&TEST_API_KEY)?
-        .send(Command {
-            action: Action::Hello,
-            argument: 0,
-        });
+        .send(Command::Hello);
     Some(()) //FIXME: This could be better when the implementation is completed.
 }
 
@@ -67,12 +64,7 @@ pub async fn start_patrol(
         .unwrap()
         // TODO: Get the robot id given in the request instead
         .get(&TEST_API_KEY)?
-        .send(Command {
-            action: Action::Patrol,
-
-            // TODO: Send a map with a route somehow
-            argument: 0,
-        });
+        .send(Command::Patrol(1));
     Some(()) // FIXME: Handle errors better
 }
 
