@@ -37,6 +37,12 @@ impl fmt::Display for Command {
     }
 }
 
+#[derive(Copy, Clone, Debug, Serialize, Deserialize)]
+pub struct PatrolStatus {
+    patrol_id: u64,
+    route_step: u64,
+}
+
 #[get("/command")]
 pub fn establish_connection(
     active_queues: &State<RwLock<HashMap<Uuid, Sender<Command>>>>,
