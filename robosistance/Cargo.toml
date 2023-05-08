@@ -2,7 +2,6 @@
 name = "robosistance"
 version = "0.1.0"
 edition = "2021"
-
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
@@ -10,3 +9,5 @@ rand = "0.8.5"
 rocket = {version = "0.5.0-rc.3", features = ["json", "uuid"]}
 serde = {version = "1.0.160", features = ["derive"]}
 uuid = {version = "0.7", features = ["serde", "v4"]}
+dotenv = "0.15.0"
+mongodb = {version = "2.5.0", default-features = false, features = ["sync"] }
