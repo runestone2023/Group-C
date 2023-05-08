@@ -38,9 +38,16 @@ impl fmt::Display for Command {
 }
 
 #[derive(Copy, Clone, Debug, Serialize, Deserialize)]
-pub struct PatrolStatus {
-    patrol_id: u64,
-    route_step: u64,
+struct PatrolStatus {
+    id: usize,
+    current_step: usize,
+}
+
+#[derive(Copy, Clone, Debug, Serialize, Deserialize)]
+pub enum MovementData {
+    DistanceMoved(u64), //Assuming millimetre granulairity.
+    RotationAngle(f32),
+    PatrolStatus,
 }
 
 #[get("/command")]
@@ -79,9 +86,12 @@ pub fn establish_connection(
 }
 
 #[post("/data/<robot_id>", format = "json", data = "<status>")]
-pub fn collect_distance_traveled(robot_id: Uuid, status: Json<PatrolStatus>) -> (Status, &'static str) {
+pub fn collect_distance_traveled(
+    robot_id: Uuid,
+    status: Json<MovementData>,
+) -> (Status, &'static str) {
     //! Distance is in milimeters.
-    
+
     // TODO: Save status in database
 
     (Status::NotImplemented, "Ok")
