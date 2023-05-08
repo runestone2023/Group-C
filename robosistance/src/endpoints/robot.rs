@@ -1,10 +1,11 @@
 use core::fmt;
+use rocket::http::Status;
 use rocket::response::stream::{Event, EventStream};
-use rocket::serde::{uuid::uuid, uuid::Uuid};
+use rocket::serde::{json::Json, uuid::uuid, uuid::Uuid};
 use rocket::tokio::select;
 use rocket::tokio::sync::broadcast::{channel, error::RecvError, Receiver, Sender};
 use rocket::tokio::time::{interval, Duration};
-use rocket::{get, Shutdown, State};
+use rocket::{get, post, Shutdown, State};
 use serde::{Deserialize, Serialize};
 
 use std::collections::HashMap;
@@ -41,6 +42,12 @@ pub struct Command {
     pub argument: u64, // FIXME: This should be some sort of generic byte string
 }
 
+#[derive(Clone, Debug, Serialize, Deserialize)]
+pub struct PatrolStatus {
+    current_patrol_id: u64,
+    current_patrol_step: u64,
+}
+
 #[get("/command")]
 pub fn establish_connection(
     active_queues: &State<RwLock<HashMap<Uuid, Sender<Command>>>>,
@@ -74,6 +81,15 @@ pub fn establish_connection(
             yield Event::json(&data).event(event);
         }
     }
+}
+
+#[post("/data/<robot_id>", format = "json", data = "<status>")]
+pub fn collect_distance_traveled(robot_id: Uuid, status: Json<PatrolStatus>) -> (Status, &'static str) {
+    //! Distance is in milimeters.
+    
+    // TODO: Save status in database
+
+    (Status::NotImplemented, "Ok")
 }
 
 #[get("/hello")]

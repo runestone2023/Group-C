@@ -25,6 +25,7 @@ impl MongoRepo {
         let col: Collection<RobotData> = db.collection("robotData");
         MongoRepo { col }
     }
+
     pub fn get_robot_data(&self) -> Result<Vec<RobotData>, Error> {
         let cursors = self
             .col
