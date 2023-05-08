@@ -85,14 +85,13 @@ pub fn establish_connection(
     }
 }
 
-#[post("/data/<robot_id>", format = "json", data = "<status>")]
-pub fn collect_distance_traveled(
-    robot_id: Uuid,
-    status: Json<MovementData>,
-) -> (Status, &'static str) {
-    //! Distance is in milimeters.
-
-    // TODO: Save status in database
+#[post("/data/<robot_id>", format = "json", data = "<movement>")]
+pub fn update_position(robot_id: Uuid, movement: Json<MovementData>) -> (Status, &'static str) {
+    //! Distance is in millimeters.
+    match movement.into_inner() {
+        MovementData::PatrolStatus => todo!(), // TODO: Save current patrol step in db
+        _ => todo!(), // TODO: Update movement history in db
+    }
 
     (Status::NotImplemented, "Ok")
 }

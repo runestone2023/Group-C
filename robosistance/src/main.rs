@@ -34,11 +34,10 @@ fn rocket() -> _ {
     let mutex_locked_hashmap: RwLock<HashMap<Uuid, Sender<Command>>> = RwLock::new(robot_streams);
 
     rocket::build()
-        .manage(db)
         .mount("/", routes![index, dist_dir])
         .mount(
             "/api/v1/ui",
-            routes![endpoints::ui::register_robot, get_robot_data],
+            routes![register_robot, get_robot_data],
         )
         .mount(
             "/api/v1/robot",
@@ -46,4 +45,5 @@ fn rocket() -> _ {
         )
         .mount("/api/v1/robot", routes![hello, establish_connection])
         .manage(mutex_locked_hashmap)
+        .manage(db)
 }
