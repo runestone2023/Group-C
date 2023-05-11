@@ -4,6 +4,7 @@
 
 ### Backend
 #### Toolchain setup
+##### Rust
 Install the nightly toolchain.
 
 `rustup toolchain install nightly`
@@ -12,6 +13,10 @@ Set the toolchain for the project.
 **NOTE: This must be done in the `/robosistance` folder**
 
 `rustup override set nightly`
+
+##### MongoDB
+
+Add a `.env` file to the robosistance folder with `MONGOURI=?` where `?` should be the database URI.
 
 #### Building
 Error checking.
