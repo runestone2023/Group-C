@@ -1763,6 +1763,7 @@ dependencies = [
 name = "robosistance"
 version = "0.1.0"
 dependencies = [
+ "bson",
  "dotenv",
  "mongodb",
  "rand 0.8.5",

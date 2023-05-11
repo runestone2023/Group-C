@@ -1,15 +1,15 @@
-use super::robot::{Command, TEST_API_KEY};
-use crate::{db::models::RobotDetails, db::mongodb::MongoRepo};
 use rocket::tokio::sync::broadcast::Sender;
 use rocket::{get, http::Status, post, serde::json::Json, serde::uuid::Uuid, State};
 use std::collections::HashMap;
 use std::sync::RwLock;
-use uuid::Uuid as UuidCrate;
+
+use super::robot::{Command, TEST_API_KEY};
+use crate::{db::models::RobotPosition, db::mongodb::MongoRepo};
 
 #[get("/register")]
 pub async fn register_robot() -> String {
     //! Generate an API key for a new robot
-    UuidCrate::new_v4().to_string()
+    Uuid::new_v4().to_string()
 
     // FIXME: Save the key in the database.
 }
@@ -21,8 +21,13 @@ pub async fn get_all_data() {
 }
 
 #[get("/data/position/<robot_id>")]
-pub async fn get_position(robot_id: Uuid) {
-    //! Get position for a robot.
+pub fn get_position(db: &State<MongoRepo>, robot_id: Uuid) -> Result<Json<RobotPosition>, Status> {
+    let bson_uuid = bson::Uuid::from_uuid_1(robot_id);
+
+    match db.get_robot_position(bson_uuid) {
+        Ok(robot_data) => Ok(Json(robot_data)),
+        Err(_) => Err(Status::InternalServerError),
+    }
 }
 
 #[get("/data/history/<robot_id>")]
@@ -75,12 +80,3 @@ pub async fn add_patrol_route(robot_id: Uuid) {
 
     // Send list of coordinates which makes up a path between two points (in body).
 }
-
-// #[get("/get_robot_data")]
-// pub fn get_robot_data(db: &State<MongoRepo>) -> Result<Json<RobotDetails>, Status> {
-//     let robot_data = db.get_robot_data();
-//     match robot_data {
-//         Ok(robot_data) => Ok(Json(robot_data)),
-//         Err(_) => Err(Status::InternalServerError),
-//     }
-// }
