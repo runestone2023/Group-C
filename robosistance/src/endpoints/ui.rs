@@ -1,6 +1,7 @@
-use crate::endpoints::robot::{Command, TEST_API_KEY};
+use super::robot::{Command, TEST_API_KEY};
+use crate::{db::models::RobotDetails, db::mongodb::MongoRepo};
 use rocket::tokio::sync::broadcast::Sender;
-use rocket::{get, post, serde::uuid::Uuid, State};
+use rocket::{get, http::Status, post, serde::json::Json, serde::uuid::Uuid, State};
 use std::collections::HashMap;
 use std::sync::RwLock;
 use uuid::Uuid as UuidCrate;
@@ -74,3 +75,12 @@ pub async fn add_patrol_route(robot_id: Uuid) {
 
     // Send list of coordinates which makes up a path between two points (in body).
 }
+
+// #[get("/get_robot_data")]
+// pub fn get_robot_data(db: &State<MongoRepo>) -> Result<Json<RobotDetails>, Status> {
+//     let robot_data = db.get_robot_data();
+//     match robot_data {
+//         Ok(robot_data) => Ok(Json(robot_data)),
+//         Err(_) => Err(Status::InternalServerError),
+//     }
+// }

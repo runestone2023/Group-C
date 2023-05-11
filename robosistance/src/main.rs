@@ -11,11 +11,10 @@ use std::{
     path::{Path, PathBuf},
 };
 
-mod endpoints;
 mod db;
+mod endpoints;
 
-use db::mongodb_robot::MongoRepo;
-use endpoints::db::get_robot_data;
+use db::mongodb::MongoRepo;
 
 #[get("/")]
 fn index() -> Redirect {
@@ -35,15 +34,17 @@ fn rocket() -> _ {
 
     rocket::build()
         .mount("/", routes![index, dist_dir])
-        .mount(
-            "/api/v1/ui",
-            routes![register_robot, get_robot_data],
-        )
+        .mount("/api/v1/ui", routes![register_robot])
         .mount(
             "/api/v1/robot",
-            routes![register_robot, hello_test, start_patrol],
+            routes![
+                register_robot,
+                hello_test,
+                start_patrol,
+                hello,
+                establish_connection
+            ],
         )
-        .mount("/api/v1/robot", routes![hello, establish_connection])
         .manage(mutex_locked_hashmap)
         .manage(db)
 }

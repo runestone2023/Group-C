@@ -11,6 +11,8 @@ use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use std::sync::RwLock;
 
+use crate::db::models::MovementData;
+
 pub const TEST_API_KEY: Uuid = uuid!("67e55044-10b1-426f-9247-bb680e5fe0c8");
 
 #[derive(Copy, Clone, Debug, Serialize, Deserialize)]
@@ -35,19 +37,6 @@ impl fmt::Display for Command {
             Closed => write!(f, "Closed"),
         }
     }
-}
-
-#[derive(Copy, Clone, Debug, Serialize, Deserialize)]
-struct PatrolStatus {
-    id: usize,
-    current_step: usize,
-}
-
-#[derive(Copy, Clone, Debug, Serialize, Deserialize)]
-pub enum MovementData {
-    DistanceMoved(u64), //Assuming millimetre granulairity.
-    RotationAngle(f32),
-    PatrolStatus,
 }
 
 #[get("/command")]
@@ -90,7 +79,7 @@ pub fn update_position(robot_id: Uuid, movement: Json<MovementData>) -> (Status,
     //! Distance is in millimeters.
     match movement.into_inner() {
         MovementData::PatrolStatus => todo!(), // TODO: Save current patrol step in db
-        _ => todo!(), // TODO: Update movement history in db
+        _ => todo!(),                          // TODO: Update movement history in db
     }
 
     (Status::NotImplemented, "Ok")
