@@ -12,6 +12,7 @@ use std::collections::HashMap;
 use std::sync::RwLock;
 
 use crate::db::models::{MovementData, RobotPosition};
+use crate::db::mongodb::MongoRepo;
 
 pub const TEST_API_KEY: Uuid = uuid!("67e55044-10b1-426f-9247-bb680e5fe0c8");
 
@@ -75,14 +76,12 @@ pub fn establish_connection(
 }
 
 #[post("/data/<robot_id>", format = "json", data = "<movement>")]
-pub fn update_position(robot_id: Uuid, movement: Json<MovementData>) -> (Status, &'static str) {
-    //! Distance is in millimeters.
+pub fn update_position(robot_id: Uuid, movement: Json<MovementData>, db: &State<MongoRepo>) -> Result<(), Status> {
+    let bson_uuid = bson::Uuid::from_uuid_1(robot_id);
     match movement.into_inner() {
         MovementData::PatrolStatus => todo!(), // TODO: Save current patrol step in db
-        _ => todo!(),                                // TODO: Update movement history in db
+        other => db.append_position(bson_uuid, other).or(Err(Status::InternalServerError)),
     }
-
-    (Status::NotImplemented, "Ok")
 }
 
 #[get("/hello")]
