@@ -1,22 +1,19 @@
-use std::{env, error::Error, fmt};
+use std::{env, error::Error, fmt::{self, write}};
 extern crate dotenv;
-use super::models::{RobotDetails, RobotPosition};
+use super::models::{RobotDetails, RobotPosition, MovementData};
 use dotenv::dotenv;
 
 use mongodb::{
     bson::{doc, Uuid},
     sync::{Client, Collection},
 };
-
-pub struct MongoRepo {
-    position: Collection<RobotPosition>,
-    details: Collection<RobotDetails>,
-}
+use rocket::Data;
 
 #[derive(Debug, Clone)]
 pub enum DatabaseError {
     NotFound,
     MongoError(mongodb::error::Error),
+    BsonError(bson::ser::Error),
 }
 
 impl fmt::Display for DatabaseError {
@@ -24,7 +21,8 @@ impl fmt::Display for DatabaseError {
         use DatabaseError::*;
         match self {
             NotFound => write!(f, "entry was not found in the database"),
-            MongoError(e) => write!(f, "the database could not complete the query"),
+            MongoError(_) => write!(f, "the database could not complete the query"),
+            BsonError(_) => write!(f, "could not serialize data"),
         }
     }
 }
@@ -35,6 +33,7 @@ impl Error for DatabaseError {
         match self {
             NotFound => None,
             MongoError(e) => e.source(),
+            BsonError(e) => e.source(),
         }
     }
 }
@@ -43,6 +42,17 @@ impl From<mongodb::error::Error> for DatabaseError {
     fn from(value: mongodb::error::Error) -> Self {
         DatabaseError::MongoError(value)
     }
+}
+
+impl From<bson::ser::Error> for DatabaseError {
+    fn from(value: bson::ser::Error) -> Self {
+        DatabaseError::BsonError(value)
+    }
+}
+
+pub struct MongoRepo {
+    position: Collection<RobotPosition>,
+    details: Collection<RobotDetails>,
 }
 
 impl MongoRepo {
@@ -76,5 +86,12 @@ impl MongoRepo {
         let filter = doc! {"id": id};
         let result = self.position.find_one(filter, None)?;
         result.ok_or(DatabaseError::NotFound)
+    }
+
+    pub fn append_position(&self, id: Uuid, new_position: MovementData) -> Result<(), DatabaseError> {
+        let filter = doc! {"id": id};
+        let doc = bson::to_document(&new_position)?;
+        self.position.find_one_and_update(filter, doc!("$push": {"position": doc}), None)?;
+        Ok(())
     }
 }
