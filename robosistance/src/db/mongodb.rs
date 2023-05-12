@@ -1,6 +1,10 @@
-use std::{env, error::Error, fmt::{self, write}};
+use std::{
+    env,
+    error::Error,
+    fmt::{self, write},
+};
 extern crate dotenv;
-use super::models::{RobotDetails, RobotPosition, MovementData};
+use super::models::{MovementData, RobotDetails, RobotPosition};
 use dotenv::dotenv;
 
 use mongodb::{
@@ -82,16 +86,25 @@ impl MongoRepo {
     //     Ok(robot_data.expect("No data was found."))
     // }
 
-    pub fn get_robot_position(&self, id: Uuid) -> Result<RobotPosition, DatabaseError> {
+    pub fn get_robot_position(&self, id: Uuid) -> Result<Vec<MovementData>, DatabaseError> {
         let filter = doc! {"id": id};
-        let result = self.position.find_one(filter, None)?;
-        result.ok_or(DatabaseError::NotFound)
+        let result = self
+            .position
+            .find_one(filter, None)?
+            .ok_or(DatabaseError::NotFound)?
+            .position;
+        Ok(result)
     }
 
-    pub fn append_position(&self, id: Uuid, new_position: MovementData) -> Result<(), DatabaseError> {
+    pub fn append_position(
+        &self,
+        id: Uuid,
+        new_position: MovementData,
+    ) -> Result<(), DatabaseError> {
         let filter = doc! {"id": id};
         let doc = bson::to_document(&new_position)?;
-        self.position.find_one_and_update(filter, doc!("$push": {"position": doc}), None)?;
+        self.position
+            .find_one_and_update(filter, doc!("$push": {"position": doc}), None)?;
         Ok(())
     }
 }

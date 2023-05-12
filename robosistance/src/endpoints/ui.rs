@@ -4,6 +4,7 @@ use std::collections::HashMap;
 use std::sync::RwLock;
 
 use super::robot::{Command, TEST_API_KEY};
+use crate::db::models::MovementData;
 use crate::{db::models::RobotPosition, db::mongodb::MongoRepo};
 
 #[get("/register")]
@@ -21,12 +22,12 @@ pub async fn get_all_data() {
 }
 
 #[get("/data/position/<robot_id>")]
-pub fn get_position(db: &State<MongoRepo>, robot_id: Uuid) -> Result<Json<RobotPosition>, Status> {
+pub fn get_position(db: &State<MongoRepo>, robot_id: Uuid) -> Result<Json<Vec<MovementData>>, Status> {
     let bson_uuid = bson::Uuid::from_uuid_1(robot_id);
 
     match db.get_robot_position(bson_uuid) {
         Ok(robot_data) => Ok(Json(robot_data)),
-        Err(_) => Err(Status::InternalServerError),
+        Err(_) => Err(Status::InternalServerError), // Logging maybe?
     }
 }
 
