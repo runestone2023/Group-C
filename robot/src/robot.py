@@ -28,7 +28,7 @@ class Robot:
 
 
     async def set_movement_speed(self, event):
-        speed = event.data.get('argument')
+        speed = event.json.get('argument')
         self.drive_base.settings(speed=speed)
 
     # Get the distance traveled by the robot in centimeters
@@ -43,7 +43,7 @@ class Robot:
 
     # Direction == 1 is forward, direction == -1 is backward
     async def move(self, event):
-        direction = event.data.get('argument')
+        direction = event.json.get('argument')
         if direction == 1:
             self.drive_base.drive(200, 0)
         elif direction == -1:
@@ -53,16 +53,16 @@ class Robot:
 
     # Positive distance is forward, negative distance is backward
     async def move_distance(self, event):
-        distance = event.data.get('argument')
+        distance = event.json.get('argument')
         self.drive_base.straight(distance)
 
     # Positive angle is clockwise, negative angle is counterclockwise
     async def rotate(self, event):
-        angle = event.data.get('argument')
+        angle = event.json.get('argument')
         self.drive_base.turn(angle)
 
     async def follow_route(self, event):
-        route_id = event.data.get('argument')
+        route_id = event.json.get('argument')
         route = self.routes.get(route_id)
         for event in route:
             self.event_source.dispatch(event)
