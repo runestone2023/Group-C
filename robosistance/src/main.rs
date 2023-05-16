@@ -1,5 +1,5 @@
 #![feature(decl_macro)]
-use endpoints::robot::{establish_connection, hello, Command};
+use endpoints::robot::{establish_connection, hello, update_position, Command};
 use endpoints::ui::{get_position, hello_test, register_robot, start_patrol};
 use rocket::tokio::sync::broadcast::Sender;
 use rocket::{fs::NamedFile, get, launch, response::Redirect, routes, serde::uuid::Uuid};
@@ -38,6 +38,7 @@ fn rocket() -> _ {
         .mount(
             "/api/v1/robot",
             routes![
+                update_position,
                 register_robot,
                 hello_test,
                 start_patrol,

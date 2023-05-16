@@ -67,7 +67,7 @@ impl MongoRepo {
             err => err.expect("Error loading env variable"),
         };
         let client = Client::with_uri_str(uri).expect("Could not connect with client uri");
-        let db = client.database("RobotData");
+        let db = client.database("Robosistance");
         let position: Collection<RobotPosition> = db.collection("Position");
         let details: Collection<RobotDetails> = db.collection("Details");
         MongoRepo { position, details }
@@ -104,7 +104,8 @@ impl MongoRepo {
         let filter = doc! {"id": id};
         let doc = bson::to_document(&new_position)?;
         self.position
-            .find_one_and_update(filter, doc!("$push": {"position": doc}), None)?;
+            .find_one_and_update(filter, doc!("$push": {"position": doc}), None)?
+            .ok_or(DatabaseError::NotFound)?;
         Ok(())
     }
 }
