@@ -34,6 +34,11 @@ class Event:
     def check_regex(regex, input_string, default):
         match = regex.search(input_string)
         return match.group(1) if match is not None else default
+    
+    @property
+    def json(self):
+        """Returns the data of the event as a dict, assuming that it is valid json."""
+        return json.loads(self.data)
 
 
 class EventSource:
