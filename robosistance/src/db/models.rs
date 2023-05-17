@@ -3,11 +3,6 @@ use serde::{Deserialize, Serialize};
 use std::fmt;
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
-pub struct Route {
-    pub commands: Vec<Command>,
-}
-
-#[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct RobotDetails {
     pub id: Uuid,
     pub name: String,
@@ -45,6 +40,11 @@ pub enum MovementData {
     PatrolStatus,
 }
 
+#[derive(Debug, Serialize, Deserialize, Clone)]
+pub struct Route {
+    pub commands: Vec<Command>,
+}
+
 #[derive(Copy, Clone, Debug, Serialize, Deserialize)]
 pub enum Command {
     Hello,
@@ -53,11 +53,13 @@ pub enum Command {
     Beep,
     Patrol(usize), // As an id.
     Closed,
+    Route,
 }
 
 impl fmt::Display for Command {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         use Command::*;
+
         match self {
             Hello => write!(f, "Hello"),
             Rotate(_) => write!(f, "Rotate"),
@@ -65,6 +67,7 @@ impl fmt::Display for Command {
             Beep => write!(f, "Beep"),
             Patrol(_) => write!(f, "Patrol"),
             Closed => write!(f, "Closed"),
+            Route => write!(f, "Route"),
         }
     }
 }

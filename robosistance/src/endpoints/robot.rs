@@ -1,4 +1,3 @@
-use core::fmt;
 use rocket::http::Status;
 use rocket::response::stream::{Event, EventStream};
 use rocket::serde::{json::Json, uuid::uuid, uuid::Uuid};
@@ -6,26 +5,25 @@ use rocket::tokio::select;
 use rocket::tokio::sync::broadcast::{channel, error::RecvError, Receiver, Sender};
 use rocket::tokio::time::{interval, Duration};
 use rocket::{get, post, Shutdown, State};
-use serde::{Deserialize, Serialize};
 
 use std::collections::HashMap;
 use std::sync::RwLock;
 
-use crate::db::models::{MovementData, Command};
+use crate::db::models::{Command, MovementData};
 use crate::db::mongodb::MongoRepo;
 
 pub const TEST_API_KEY: Uuid = uuid!("67e55044-10b1-426f-9247-bb680e5fe0c8");
 
 #[get("/command")]
 pub fn establish_connection(
-    active_queues: &State<RwLock<HashMap<Uuid, Sender<Command>>>>,
+    active_queues: &State<RwLock<HashMap<Uuid, Sender<Event>>>>,
     mut end: Shutdown,
 ) -> EventStream![] {
     //! Establish connection with the robot and send any commands that are added to a buffer of commands to the robot.
 
     // Initialise a send queue and subscribe to that queue
-    let command_queue: Sender<Command> = channel::<Command>(1024).0;
-    let mut receiver: Receiver<Command> = command_queue.subscribe();
+    let command_queue: Sender<Event> = channel::<Event>(1024).0;
+    let mut receiver: Receiver<Event> = command_queue.subscribe();
 
     // Lock the active queues hashmap before inserting a sender queue of commands
     let mut locked_hashmap = active_queues.write().unwrap();
@@ -34,19 +32,14 @@ pub fn establish_connection(
 
     EventStream! {
         loop {
-            let data: Command;
-            let event: String;
-
             select! {
-                cmd = receiver.recv() => match cmd {
-                    Ok(cmd) => (data, event) = (cmd, cmd.to_string()),
+                event = receiver.recv() => match event {
+                    Ok(event) => yield event,
                     Err(RecvError::Closed) => break,
                     Err(RecvError::Lagged(_)) => continue,
                 },
                 _ = &mut end => break,
             };
-
-            yield Event::json(&data).event(event);
         }
     }
 }

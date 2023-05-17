@@ -4,11 +4,11 @@ use std::{
     fmt::{self},
 };
 extern crate dotenv;
-use super::models::{MovementData, RobotDetails, RobotPosition, Route, Command};
+use super::models::{Command, MovementData, RobotDetails, RobotPosition, Route};
 use dotenv::dotenv;
 
 use mongodb::{
-    bson::{doc, Uuid, Document},
+    bson::{doc, Uuid},
     sync::{Client, Collection},
 };
 
@@ -115,8 +115,13 @@ impl MongoRepo {
     }
 
     pub fn save_route(&self, commands: Vec<Command>) -> Result<(), DatabaseError> {
-        self.routes
-            .insert_one(Route {commands: commands}, None)?;
+        self.routes.insert_one(Route { commands: commands }, None)?;
         Ok(())
+    }
+
+    pub fn get_routes(&self) -> Result<Vec<Route>, DatabaseError> {
+        let cursors = self.routes.find(None, None).ok().expect("Bongus");
+        let res = cursors.map(|doc| doc.unwrap()).collect();
+        Ok(res)
     }
 }
