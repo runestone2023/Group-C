@@ -32,7 +32,7 @@ class Robot:
 
     # Get the distance traveled by the robot in centimeters
     async def distance_travelled(self):
-        return self.drive_base.distance() / 10
+        return self.drive_base.distance()
 
     async def obstacle_in_front(self):
         return self.ultrasonic_sensor.distance() > 300
@@ -40,15 +40,20 @@ class Robot:
     async def stop_moving(self):
         self.drive_base.stop()
 
-    # Direction == 1 is forward, direction == -1 is backward
+    # Event takes 0, 1 or 2 arguments.
+    # If 0 arguments, start moving with previously set speed and 0 angle
+    # If 1 argument, start moving with given speed and 0 angle
+    # If 2 arguments, start moving with given speed and angle
     async def move(self, event):
-        direction = event.json.get('argument')
-        if direction == 1:
-            self.drive_base.drive(200, 0)
-        elif direction == -1:
-            self.drive_base.drive(-200, 0)
+        # Assumes get() is a list of argument where arg[0] is speed and arg[1] is angle
+        arg = event.json.get('argument')
+        if arg:
+            self.drive_base.drive(arg[0], arg[1])
+        elif len(arg) == 1:
+            self.drive_base.drive(arg[0], 0)
         else:
-            await self.stop_moving()
+            # Drive with previously set speed and 0 angle
+            self.drive_base.drive()
 
     # Positive distance is forward, negative distance is backward
     async def move_distance(self, event):
