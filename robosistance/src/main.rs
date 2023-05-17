@@ -1,5 +1,5 @@
 #![feature(decl_macro)]
-use endpoints::robot::{establish_connection, hello, update_position, Command};
+use endpoints::robot::{establish_connection, hello, update_position};
 use endpoints::ui::{get_position, hello_test, register_robot, start_patrol};
 use rocket::tokio::sync::broadcast::Sender;
 use rocket::{fs::NamedFile, get, launch, response::Redirect, routes, serde::uuid::Uuid};
@@ -15,6 +15,7 @@ mod db;
 mod endpoints;
 
 use db::mongodb::MongoRepo;
+use db::models::Command;
 
 #[get("/")]
 fn index() -> Redirect {

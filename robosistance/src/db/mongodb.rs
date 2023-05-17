@@ -1,17 +1,16 @@
 use std::{
     env,
     error::Error,
-    fmt::{self, write},
+    fmt::{self},
 };
 extern crate dotenv;
-use super::models::{MovementData, RobotDetails, RobotPosition};
+use super::models::{MovementData, RobotDetails, RobotPosition, Route, Command};
 use dotenv::dotenv;
 
 use mongodb::{
-    bson::{doc, Uuid},
+    bson::{doc, Uuid, Document},
     sync::{Client, Collection},
 };
-use rocket::Data;
 
 #[derive(Debug, Clone)]
 pub enum DatabaseError {
@@ -57,6 +56,7 @@ impl From<bson::ser::Error> for DatabaseError {
 pub struct MongoRepo {
     position: Collection<RobotPosition>,
     details: Collection<RobotDetails>,
+    routes: Collection<Route>,
 }
 
 impl MongoRepo {
@@ -70,7 +70,12 @@ impl MongoRepo {
         let db = client.database("Robosistance");
         let position: Collection<RobotPosition> = db.collection("Position");
         let details: Collection<RobotDetails> = db.collection("Details");
-        MongoRepo { position, details }
+        let routes: Collection<Route> = db.collection("Routes");
+        MongoRepo {
+            position,
+            details,
+            routes,
+        }
     }
 
     // pub fn get_robot_data(&self) -> Result<RobotContainer, Error> {
@@ -106,6 +111,12 @@ impl MongoRepo {
         self.position
             .find_one_and_update(filter, doc!("$push": {"position": doc}), None)?
             .ok_or(DatabaseError::NotFound)?;
+        Ok(())
+    }
+
+    pub fn save_route(&self, commands: Vec<Command>) -> Result<(), DatabaseError> {
+        self.routes
+            .insert_one(Route {commands: commands}, None)?;
         Ok(())
     }
 }

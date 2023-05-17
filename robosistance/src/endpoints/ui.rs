@@ -3,9 +3,9 @@ use rocket::{get, http::Status, post, serde::json::Json, serde::uuid::Uuid, Stat
 use std::collections::HashMap;
 use std::sync::RwLock;
 
-use super::robot::{Command, TEST_API_KEY};
-use crate::db::models::MovementData;
-use crate::{db::models::RobotPosition, db::mongodb::MongoRepo};
+use super::robot::{TEST_API_KEY};
+use crate::db::models::{MovementData, Command};
+use crate::db::mongodb::MongoRepo;
 
 #[get("/register")]
 pub async fn register_robot() -> String {

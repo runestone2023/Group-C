@@ -11,34 +11,10 @@ use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use std::sync::RwLock;
 
-use crate::db::models::{MovementData, RobotPosition};
+use crate::db::models::{MovementData, Command};
 use crate::db::mongodb::MongoRepo;
 
 pub const TEST_API_KEY: Uuid = uuid!("67e55044-10b1-426f-9247-bb680e5fe0c8");
-
-#[derive(Copy, Clone, Debug, Serialize, Deserialize)]
-pub enum Command {
-    Hello,
-    Rotate(f32),
-    Move(u64),
-    Beep,
-    Patrol(usize), // As an id.
-    Closed,
-}
-
-impl fmt::Display for Command {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        use Command::*;
-        match self {
-            Hello => write!(f, "Hello"),
-            Rotate(_) => write!(f, "Rotate"),
-            Move(_) => write!(f, "Move"),
-            Beep => write!(f, "Beep"),
-            Patrol(_) => write!(f, "Patrol"),
-            Closed => write!(f, "Closed"),
-        }
-    }
-}
 
 #[get("/command")]
 pub fn establish_connection(
@@ -76,11 +52,17 @@ pub fn establish_connection(
 }
 
 #[post("/data/<robot_id>", format = "json", data = "<movement>")]
-pub fn update_position(robot_id: Uuid, movement: Json<MovementData>, db: &State<MongoRepo>) -> Result<(), Status> {
+pub fn update_position(
+    robot_id: Uuid,
+    movement: Json<MovementData>,
+    db: &State<MongoRepo>,
+) -> Result<(), Status> {
     let bson_uuid = bson::Uuid::from_uuid_1(robot_id);
     match movement.into_inner() {
         MovementData::PatrolStatus => todo!(), // TODO: Save current patrol step in db
-        other => db.append_position(bson_uuid, other).or(Err(Status::InternalServerError)),
+        other => db
+            .append_position(bson_uuid, other)
+            .or(Err(Status::InternalServerError)),
     }
 }
 
