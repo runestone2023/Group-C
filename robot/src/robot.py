@@ -6,7 +6,6 @@ from event import Event
 import uasyncio
 
 
-
 class Robot:
     def __init__(self, event_source):
         self.ev3 = EV3Brick()
@@ -30,46 +29,48 @@ class Robot:
         speed = event.json.get('argument')
         self.drive_base.settings(speed=speed)
 
+
     # Get the distance traveled by the robot in centimeters
     async def distance_travelled(self):
         return self.drive_base.distance()
 
+
     async def obstacle_in_front(self):
         return self.ultrasonic_sensor.distance() > 300
+
 
     async def stop_moving(self):
         self.drive_base.stop()
 
-    # Event takes 0, 1 or 2 arguments.
-    # If 0 arguments, start moving with previously set speed and 0 angle
-    # If 1 argument, start moving with given speed and 0 angle
-    # If 2 arguments, start moving with given speed and angle
-    async def move(self, event):
-        # Assumes get() is a list of argument where arg[0] is speed and arg[1] is angle
-        arg = event.json.get('argument')
-        if arg:
-            self.drive_base.drive(arg[0], arg[1])
-        elif len(arg) == 1:
-            self.drive_base.drive(arg[0], 0)
-        else:
-            # Drive with previously set speed and 0 angle
-            self.drive_base.drive()
 
+    async def move(self, event):
+        '''
+        This event takes MovementSpeed and RotationSpeed which both can be negative for going backwards/rotating opposite direction.
+        '''
+        movement_speed = event.json.get('MovementSpeed')
+        rotation_speed = event.json.get('RotationSpeed')       
+        
+        self.drive_base.drive(movement_speed, rotation_speed)
+                              
+                              
     # Positive distance is forward, negative distance is backward
     async def move_distance(self, event):
         distance = event.json.get('argument')
         self.drive_base.straight(distance)
+
 
     # Positive angle is clockwise, negative angle is counterclockwise
     async def rotate(self, event):
         angle = event.json.get('argument')
         self.drive_base.turn(angle)
 
+
     async def follow_route(self, event):
         route_id = event.json.get('argument')
         route = self.routes.get(route_id)
         for event in route:
             self.event_source.dispatch(event)
+
 
     async def patrol(self, _):
         while True:
