@@ -17,6 +17,8 @@ class Robot:
             left_motor, right_motor, wheel_diameter=50, axle_track=90)
 
         self.ultrasonic_sensor = UltrasonicSensor(Port.S4)
+        self.gyro_sensor = GyroSensor(Port.S3)
+        self.GSPK = 2.5
 
         self.routes = {1: [Event("MoveDistance", '{argument: 300}'), Event("Rotate", '{argument: 90}'),
                            Event("MoveDistance", '{argument: 300}'), Event("Rotate", '{argument: 90}',
@@ -48,21 +50,49 @@ class Robot:
         This event takes MovementSpeed and RotationSpeed which both can be negative for going backwards/rotating opposite direction.
         '''
         movement_speed = event.json.get('MovementSpeed')
-        rotation_speed = event.json.get('RotationSpeed')       
-        
-        self.drive_base.drive(movement_speed, rotation_speed)
+        rotation_speed = event.json.get('RotationSpeed')
+
+        self.gyro_sensor.reset_angle(0)
+
+        # Avoid drifting when driving straight
+        if rotation_speed is 0:
+            while True:
+                correction = -1 * self.gyro_sensor.angle() * self.GSPK
+                self.drive_base.drive(movement_speed, correction)
+        else:
+            self.drive_base.drive(movement_speed, rotation_speed)
                               
                               
     # Positive distance is forward, negative distance is backward
     async def move_distance(self, event):
         distance = event.json.get('argument')
-        self.drive_base.straight(distance)
+
+        self.gyro_sensor.reset_angle(0)
+        cur_distance = self.drive_base.distance()
+
+        # Avoid drifting when driving straight
+        while True:
+            correction = -1 * self.gyro_sensor.angle() * self.GSPK
+
+            self.drive_base.drive(distance, correction)
+
+            distance_travelled = self.drive_base.distance() - cur_distance
+
+            if distance_travelled >= distance:
+                self.drive_base.stop()
 
 
     # Positive angle is clockwise, negative angle is counterclockwise
     async def rotate(self, event):
         angle = event.json.get('argument')
+
+        self.gyro_sensor.reset_angle(0)
+
         self.drive_base.turn(angle)
+
+        # Correct for overshoot
+        correction = -1 * (self.gyro_sensor.angle() - angle)
+        self.drive_base.turn(correction)
 
 
     async def follow_route(self, event):
@@ -73,9 +103,14 @@ class Robot:
 
 
     async def patrol(self, _):
+
+        self.gyro_sensor.reset_angle(0)
+
         while True:
+            correction = -1 * self.gyro_sensor.angle() * self.GSPK
+
             # Begin driving forward at 200 millimeters per second.
-            self.drive_base.drive(200, 0)
+            self.drive_base.drive(200, correction)
 
             # Wait until an obstacle is detected. This is done by repeatedly
             # doing nothing (waiting for 10 milliseconds) while the measured
