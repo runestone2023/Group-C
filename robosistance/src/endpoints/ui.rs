@@ -63,18 +63,30 @@ pub async fn move_robot(robot_id: Uuid, drive_speed: f32, rotation_speed: f32) {
 #[get("/command/patrol/<robot_id>")]
 // TODO: Change robot_id to Uuid and add patrol route id to arguments
 pub async fn start_patrol(
+    db: &State<MongoRepo>,
     active_queues: &State<RwLock<HashMap<Uuid, Sender<Event>>>>,
     robot_id: i32,
-) -> Option<()> {
+) -> Result<(), Status> {
     //! Endpoint that will tell the robot to start patrolling a specified path.
+    let routes = db.get_routes().expect("no routes available");
+
+    let _res = active_queues
+        .read()
+        .unwrap()
+        .get(&TEST_API_KEY)
+        .ok_or(Status::InternalServerError)?
+        .send(Event::json(&routes).event(Command::Route.to_string()));
+
     let patrol = Command::Patrol(0);
+    
     let _res = active_queues
         .read()
         .unwrap()
         // TODO: Get the robot id given in the request instead
-        .get(&TEST_API_KEY)?
+        .get(&TEST_API_KEY)
+        .ok_or(Status::InternalServerError)?
         .send(Event::json(&patrol).event(patrol.to_string()));
-    Some(()) // FIXME: Handle errors better
+    Ok(()) // FIXME: Handle errors better
 }
 
 #[post(
