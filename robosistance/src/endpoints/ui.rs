@@ -68,14 +68,6 @@ pub async fn start_patrol(
     robot_id: i32,
 ) -> Result<(), Status> {
     //! Endpoint that will tell the robot to start patrolling a specified path.
-    let routes = db.get_routes().expect("no routes available");
-
-    let _res = active_queues
-        .read()
-        .unwrap()
-        .get(&TEST_API_KEY)
-        .ok_or(Status::InternalServerError)?
-        .send(Event::json(&routes).event(Command::Route.to_string()));
 
     let patrol = Command::Patrol(0);
     

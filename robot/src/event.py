@@ -34,6 +34,7 @@ class Event:
     def check_regex(regex, input_string, default):
         match = regex.search(input_string)
         return match.group(1) if match is not None else default
+
     
     @property
     def json(self):
@@ -60,6 +61,7 @@ class EventSource:
 
     def dispatch(self, event):
         try: 
+            print(event.event)
             action = self.dispatch_dict[event.event]
             self.loop.create_task(action(event))
         except KeyError as e:
@@ -79,6 +81,7 @@ class EventSource:
             buf = await reader.read(self.READ_SIZE)
 
             if buf != b'' and not buf.startswith(b':'):
+                print(buf)
                 event = Event.parse_from_string(buf.decode('utf-8'))
                 print(event)
                 self.dispatch(event)

@@ -34,7 +34,7 @@ pub fn establish_connection(
         loop {
             select! {
                 event = receiver.recv() => match event {
-                    Ok(event) => yield event,
+                    Ok(event) => {println!("{:?}", event); yield event},
                     Err(RecvError::Closed) => break,
                     Err(RecvError::Lagged(_)) => continue,
                 },
@@ -68,4 +68,21 @@ pub fn hello() -> EventStream![] {
             timer.tick().await;
         }
     }
+}
+
+#[get("/command/patrol/all")]
+pub async fn get_all_routes(
+    active_queues: &State<RwLock<HashMap<Uuid, Sender<Event>>>>,
+    db: &State<MongoRepo>,
+) -> Result<(), Status> {
+    let routes = db.get_routes().expect("no routes available");
+
+    let _res = active_queues
+        .read()
+        .unwrap()
+        // TODO: Get the robot id given in the request instead
+        .get(&TEST_API_KEY)
+        .ok_or(Status::InternalServerError)?
+        .send(Event::json(&routes).event(Command::Route.to_string()));
+    Ok(()) // FIXME: Handle errors better
 }

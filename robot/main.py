@@ -6,6 +6,10 @@ from robot import Robot
 
 import uasyncio
 
+async def get_routes():
+    GET_STR = "GET {} HTTP/1.0\r\n\r\n".format("/api/v1/robot/command/patrol/all")
+    reader, writer = await uasyncio.open_connection('172.20.10.2', 8080)
+    await writer.awrite(GET_STR.encode('utf-8'))
 
 def main():
     # Change IP to the server's IP
@@ -19,6 +23,7 @@ def main():
     es.add_event_listener('MoveDistance', robot.move_distance)
 
     loop = uasyncio.get_event_loop()
+    loop.create_task(get_routes())
     loop.run_forever()
 
 

@@ -107,15 +107,36 @@ impl MongoRepo {
     }
 
     pub fn get_routes(&self) -> Result<Vec<Route>, DatabaseError> {
-        let cursors = self.routes.find(None, None).ok().expect("Bongus");
+        let cursors = self.routes.find(None, None).expect("No routes found");
         let res = cursors.map(|doc| doc.unwrap()).collect();
         Ok(res)
     }
 
     pub fn init_route(&self) -> Result<(), DatabaseError> {
         //! Initialise database with a route.
-        let route = vec!(Command::MoveDistance(200), Command::Rotate(90.0), Command::MoveDistance(200), Command::Rotate(90.0), Command::MoveDistance(200), Command::Rotate(-90.0), Command::MoveDistance(200), Command::Rotate(-90.0), Command::MoveDistance(200));
-        self.routes.insert_one(Route { commands: route}, None)?;
+        let route = vec![
+            Command::MoveDistance(200),
+            Command::Rotate(-90.0),
+            Command::MoveDistance(200),
+            Command::Rotate(-90.0),
+            Command::MoveDistance(200),
+            Command::Rotate(90.0),
+            Command::MoveDistance(200),
+            Command::Rotate(90.0),
+            Command::MoveDistance(200),
+            Command::Rotate(180.0),
+            Command::MoveDistance(200),
+            Command::Rotate(-90.0),
+            Command::MoveDistance(200),
+            Command::Rotate(-90.0),
+            Command::MoveDistance(200),
+            Command::Rotate(90.0),
+            Command::MoveDistance(200),
+            Command::Rotate(90.0),
+            Command::MoveDistance(200),
+            Command::Rotate(180.0),
+        ];
+        self.routes.insert_one(Route { commands: route }, None)?;
         Ok(())
     }
 }

@@ -17,12 +17,14 @@ class Robot:
             left_motor, right_motor, wheel_diameter=50, axle_track=90)
 
         self.ultrasonic_sensor = UltrasonicSensor(Port.S4)
-        self.gyro_sensor = GyroSensor(Port.S3)
+        self.gyro_sensor = GyroSensor(Port.S1)
         self.GSPK = 2.5
 
         self.routes = []
 
         self.event_source = event_source
+
+        self.patrol_flag = False
 
 
     # Get the distance traveled by the robot in centimeters
@@ -34,8 +36,8 @@ class Robot:
         return self.ultrasonic_sensor.distance() > 300
 
 
-    async def stop_moving(self):
-        self.drive_base.stop()
+    def stop_moving(self, event):
+        uasyncio.get_event_loop().stop()
 
 
     async def move(self, event):
@@ -58,15 +60,14 @@ class Robot:
                               
     # Positive distance is forward, negative distance is backward
     async def move_distance(self, event):
-        distance = event.json.get('MoveDistance')
+        distance = event.data
 
-        self.drive_base.settings(speed=200)
         self.drive_base.straight(distance)
 
 
     # Positive angle is clockwise, negative angle is counterclockwise
     async def rotate(self, event):
-        angle = event.json.get('Rotate')
+        angle = event.data
 
         self.gyro_sensor.reset_angle(0)
 
@@ -80,8 +81,12 @@ class Robot:
     async def start_patrol(self, event):
         route_id = event.json.get('Patrol')
         route = self.routes[route_id]
-        for event in route:
-            self.event_source.dispatch(event)
+        self.patrol_flag = True
+
+        while self.patrol_flag:
+            for event in route:
+                self.event_source.dispatch(event)
+                await uasyncio.sleep(1)
 
     @staticmethod
     def into_event(command):
@@ -101,6 +106,8 @@ class Robot:
         for route in event.json:
             converted_route = [self.into_event(command) for command in route['commands']]
             self.routes.append(converted_route)
+        print(self.routes)
+        #self.event_source.dispatch(Event("Patrol", '{"Patrol": 0}'))
 
     async def test_patrol(self, _):
         self.gyro_sensor.reset_angle(0)
