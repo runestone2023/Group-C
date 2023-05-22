@@ -1,5 +1,5 @@
 from pybricks.hubs import EV3Brick
-from pybricks.ev3devices import Motor, UltrasonicSensor
+from pybricks.ev3devices import Motor, UltrasonicSensor, GyroSensor
 from pybricks.parameters import Port
 from pybricks.robotics import DriveBase
 from event import Event

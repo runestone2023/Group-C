@@ -139,4 +139,9 @@ impl MongoRepo {
         self.routes.insert_one(Route { commands: route }, None)?;
         Ok(())
     }
+
+    pub fn clear_routes(&self) -> Result<(), DatabaseError> {
+        self.routes.drop(None)?;
+        Ok(())
+    }
 }
