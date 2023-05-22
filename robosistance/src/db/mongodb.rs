@@ -78,19 +78,6 @@ impl MongoRepo {
         }
     }
 
-    // pub fn get_robot_data(&self) -> Result<RobotContainer, Error> {
-    //     let id = "645cb5af719b1ef160f62cec";
-    //     let obj_id = ObjectId::parse_str(id).unwrap();
-    //     let filter = doc! {"_id": obj_id};
-    //     let robot_data = self
-    //         .col
-    //         .find_one(filter, None)
-    //         .ok()
-    //         .expect("Error getting list of robot data");
-    //     let robot_data = cursors.map(|doc| doc.unwrap()).collect();
-    //     Ok(robot_data.expect("No data was found."))
-    // }
-
     pub fn get_robot_position(&self, id: Uuid) -> Result<Vec<MovementData>, DatabaseError> {
         let filter = doc! {"id": id};
         let result = self
@@ -123,5 +110,12 @@ impl MongoRepo {
         let cursors = self.routes.find(None, None).ok().expect("Bongus");
         let res = cursors.map(|doc| doc.unwrap()).collect();
         Ok(res)
+    }
+
+    pub fn init_route(&self) -> Result<(), DatabaseError> {
+        //! Initialise database with a route.
+        let route = vec!(Command::MoveDistance(200), Command::Rotate(90.0), Command::MoveDistance(200), Command::Rotate(90.0), Command::MoveDistance(200), Command::Rotate(-90.0), Command::MoveDistance(200), Command::Rotate(-90.0), Command::MoveDistance(200));
+        self.routes.insert_one(Route { commands: route}, None)?;
+        Ok(())
     }
 }
