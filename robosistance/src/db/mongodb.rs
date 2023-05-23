@@ -66,7 +66,7 @@ impl MongoRepo {
             Ok(v) => v.to_string(),
             err => err.expect("Error loading env variable"),
         };
-        let client = Client::with_uri_str(uri).expect("Could not connect with client uri");
+        let client = Client::with_uri_str(uri).     expect("Could not connect with client uri");
         let db = client.database("Robosistance");
         let position: Collection<RobotPosition> = db.collection("Position");
         let details: Collection<RobotDetails> = db.collection("Details");
