@@ -19,6 +19,7 @@ import {
 } from "@mantine/core";
 import {
   IconBuildingFactory2,
+  IconRobot,
   IconSubscript,
   IconUser,
 } from "@tabler/icons-react";
@@ -34,16 +35,10 @@ interface NavLinkProps {
 
 const navLinks: NavLinkProps[] = [
   {
-    icon: <IconUser size="1rem" />,
+    icon: <IconRobot size="1rem" />,
     color: "yellow",
-    label: "Our Team",
+    label: "Robot Control Panel",
     to: ROUTER.HOME.INDEX,
-  },
-  {
-    icon: <IconBuildingFactory2 size="1rem" />,
-    color: "red",
-    label: "Robot",
-    to: ROUTER.ROBOT.ALL_ROBOTS,
   },
 ];
 
