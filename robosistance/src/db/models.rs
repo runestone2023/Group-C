@@ -49,7 +49,7 @@ pub struct Route {
 pub enum Command {
     Hello,
     Rotate(f32),
-    Move(u64),
+    Move(u64, f32),
     Beep,
     Patrol(usize), // As an id.
     Closed,
@@ -63,7 +63,7 @@ impl fmt::Display for Command {
         match self {
             Hello => write!(f, "Hello"),
             Rotate(_) => write!(f, "Rotate"),
-            Move(_) => write!(f, "Move"),
+            Move(_, _) => write!(f, "Move"),
             Beep => write!(f, "Beep"),
             Patrol(_) => write!(f, "Patrol"),
             Closed => write!(f, "Closed"),

@@ -56,18 +56,28 @@ pub async fn hello_test(active_queues: &State<StreamMap>) -> Option<()> {
 }
 
 #[get("/command/move/<robot_id>?<drive_speed>&<rotation_speed>")]
-pub async fn move_robot(robot_id: Uuid, drive_speed: u32, rotation_speed: f32) {
-    //! Move a specified robot forward or backward in a direction.
-    //! It is also possible to only rotate the robot or only backward/forward.
-    //! Rotation and drive speed can be negative.
+pub async fn move_robot(
+    robot_id: Uuid,
+    drive_speed: u64,
+    rotation_speed: f32,
+    active_queues: &State<StreamMap>,
+) -> Result<(), Status> {
+    let command = Command::Move(drive_speed, rotation_speed);
+    let event = Event::json(&command).event(command.to_string());
+
+    active_queues
+        .read()
+        .unwrap()
+        .get(&TEST_API_KEY)
+        .ok_or(Status::InternalServerError)?
+        .send(event)
+        .or(Err(Status::InternalServerError))
+        .and(Ok(()))
 }
 
 #[get("/command/patrol/<robot_id>")]
 // TODO: Change robot_id to Uuid and add patrol route id to arguments
-pub async fn start_patrol(
-    active_queues: &State<StreamMap>,
-    robot_id: i32,
-) -> Option<()> {
+pub async fn start_patrol(active_queues: &State<StreamMap>, robot_id: i32) -> Option<()> {
     //! Endpoint that will tell the robot to start patrolling a specified path.
     let patrol = Command::Patrol(1);
     let _res = active_queues
