@@ -1,11 +1,19 @@
-import { Button, Card, Grid, Group, Image, Stack, Text } from "@mantine/core";
+import {
+  Button,
+  Card,
+  Grid,
+  Group,
+  Image,
+  Slider,
+  Stack,
+  Text,
+} from "@mantine/core";
 import { IconHandStop, IconRadar, IconRun } from "@tabler/icons-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import robotImage from "../../assets/robot.jpg";
 import { API_URLS } from "../../config/apis/endpoint";
 import { useCallApi } from "../../config/apis";
 import { notiType, renderNotification } from "../../utils/helpers";
-import useRobotControlMovement from "../../hooks/useRobotControl";
 import demoRouteImg from "../../assets/demoroute.png";
 
 export const ROBOT_ID = "67e55044-10b1-426f-9247-bb680e5fe0c8";
@@ -14,6 +22,10 @@ const RobotsManagement = () => {
   const [robotID, setRobotID] = useState<string>();
   const [_isStartPatrol, setIsStartPatrol] = useState(false);
   // const { handleButtonPress, handleButtonRelease } = useRobotControlMovement();
+  const [driveSpeed, setDriveSpeed] = useState(0);
+  const [endDriveSpeed, setEndDriveSpeed] = useState(0);
+  const [rotationSpeed, setRotationSpeed] = useState(0);
+  const [endRotationSpeed, setEndRotationSpeed] = useState(0);
 
   const RegisterRobot = async () => {
     const { response, error } = await useCallApi(
@@ -64,6 +76,26 @@ const RobotsManagement = () => {
     }
   };
 
+  const ManuallyControlRobot = async () => {
+    const api = API_URLS.ROBOT.manuallyControl(
+      endDriveSpeed,
+      rotationSpeed,
+      ROBOT_ID
+    );
+
+    const { response, error } = await useCallApi({ ...api });
+
+    if (!error && response?.status == 200) {
+      renderNotification("Send the command successfully", notiType.SUCCESS);
+    } else {
+      renderNotification("Send the command failed", notiType.ERROR);
+    }
+  };
+
+  useEffect(() => {
+    ManuallyControlRobot();
+  }, [endDriveSpeed, endRotationSpeed]);
+
   return (
     <>
       <Grid>
@@ -84,35 +116,55 @@ const RobotsManagement = () => {
                 Register Robot
               </Button>
             </Group>
-            <Text mb={"xs"}>Control Panel</Text>
-            <Grid>
-              <Grid.Col span={12}>
-                <Button
-                  onClick={() => StartPatrol()}
-                  leftIcon={<IconRun />}
-                  mr={"xs"}
-                >
-                  Start the patrol
-                </Button>
-                <Button
-                  onClick={() => StartPatrol()}
-                  disabled={!_isStartPatrol}
-                  leftIcon={<IconHandStop />}
-                >
-                  Stop the patrol
-                </Button>
-              </Grid.Col>
-              <Grid.Col span={3}></Grid.Col>
-            </Grid>
+
+            <Text fz="lg" mb={"xs"} fw={600} mt={"md"}>
+              Control Panel
+            </Text>
+            <Text c="dimmed">
+              You can change the drive speed to start moving the robot. Change
+              the speed to 0 to stop it.
+            </Text>
+            <Text mb={"xs"} fw={600} mt={"md"} c="dimmed">
+              Drive speed
+            </Text>
+            <Slider
+              value={driveSpeed}
+              onChange={setDriveSpeed}
+              onChangeEnd={setEndDriveSpeed}
+            />
+            <Text mb={"xs"} fw={600} mt={"md"} c="dimmed">
+              Rotation speed
+            </Text>
+            <Slider
+              value={rotationSpeed}
+              onChange={setRotationSpeed}
+              onChangeEnd={setEndRotationSpeed}
+            />
           </Card>
         </Grid.Col>
         <Grid.Col span={1} />
         <Grid.Col span={5}>
           <Stack>
             <Text fz="lg" fw={600}>
-              The Patrol
+              The Patrol Map
             </Text>
             <Image src={demoRouteImg} />
+            <Group position="center">
+              <Button
+                onClick={() => StartPatrol()}
+                leftIcon={<IconRun />}
+                mr={"xs"}
+              >
+                Start the patrol
+              </Button>
+              <Button
+                onClick={() => StartPatrol()}
+                disabled={!_isStartPatrol}
+                leftIcon={<IconHandStop />}
+              >
+                Stop the patrol
+              </Button>
+            </Group>
           </Stack>
         </Grid.Col>
       </Grid>

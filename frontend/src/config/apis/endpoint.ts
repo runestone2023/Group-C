@@ -17,8 +17,12 @@ export const API_URLS = {
       method: "GET",
       header: HEADERS.header(),
     }),
-    manuallyControl: (driveSpeed: number, rotationSpeed: number) => ({
-      endPoint: `/api/v1/ui/command/move/<robot_id>?${driveSpeed}&${rotationSpeed}`,
+    manuallyControl: (
+      driveSpeed: number,
+      rotationSpeed: number,
+      robotID: string
+    ) => ({
+      endPoint: `/api/v1/ui/command/move/${robotID}?${driveSpeed}&${rotationSpeed}`,
       method: "GET",
       header: HEADERS.header(),
     }),
