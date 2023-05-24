@@ -27,6 +27,17 @@ const RobotsManagement = () => {
   const [rotationSpeed, setRotationSpeed] = useState(0);
   const [endRotationSpeed, setEndRotationSpeed] = useState(0);
 
+  const SayHello = async () => {
+    const api = API_URLS.ROBOT.sayHello();
+    const { response, error } = await useCallApi({ ...api });
+
+    if (!error && response?.status == 200) {
+      renderNotification("Say Hello ", notiType.SUCCESS);
+    } else {
+      renderNotification("Say hello command failed", notiType.ERROR);
+    }
+  };
+
   const RegisterRobot = async () => {
     const { response, error } = await useCallApi(
       API_URLS.ROBOT.registerRobot()
@@ -117,6 +128,9 @@ const RobotsManagement = () => {
               </Button>
             </Group>
 
+            <Button onClick={() => SayHello()} my={"md"}>
+              Say Hello / Beep sound
+            </Button>
             <Text fz="lg" mb={"xs"} fw={600} mt={"md"}>
               Control Panel
             </Text>
