@@ -8,6 +8,8 @@ use super::robot::TEST_API_KEY;
 use crate::db::models::{Command, MovementData, Route};
 use crate::db::mongodb::MongoRepo;
 
+type StreamMap = RwLock<HashMap<Uuid, Sender<Event>>>;
+
 #[get("/register")]
 pub async fn register_robot() -> String {
     //! Generate an API key for a new robot
@@ -41,7 +43,7 @@ pub async fn get_history(robot_id: Uuid) {
 }
 
 #[get("/command/hello")]
-pub async fn hello_test(active_queues: &State<RwLock<HashMap<Uuid, Sender<Event>>>>) -> Option<()> {
+pub async fn hello_test(active_queues: &State<StreamMap>) -> Option<()> {
     //! Test endpoint for testing that the frontend can reach the server.
     //! The endpoint sends a hello command to the robot.
     let _res = active_queues
@@ -54,7 +56,7 @@ pub async fn hello_test(active_queues: &State<RwLock<HashMap<Uuid, Sender<Event>
 }
 
 #[get("/command/move/<robot_id>?<drive_speed>&<rotation_speed>")]
-pub async fn move_robot(robot_id: Uuid, drive_speed: f32, rotation_speed: f32) {
+pub async fn move_robot(robot_id: Uuid, drive_speed: u32, rotation_speed: f32) {
     //! Move a specified robot forward or backward in a direction.
     //! It is also possible to only rotate the robot or only backward/forward.
     //! Rotation and drive speed can be negative.
@@ -63,7 +65,7 @@ pub async fn move_robot(robot_id: Uuid, drive_speed: f32, rotation_speed: f32) {
 #[get("/command/patrol/<robot_id>")]
 // TODO: Change robot_id to Uuid and add patrol route id to arguments
 pub async fn start_patrol(
-    active_queues: &State<RwLock<HashMap<Uuid, Sender<Event>>>>,
+    active_queues: &State<StreamMap>,
     robot_id: i32,
 ) -> Option<()> {
     //! Endpoint that will tell the robot to start patrolling a specified path.
@@ -84,7 +86,7 @@ pub async fn start_patrol(
 )]
 // TODO: Change robot_id to Uuid
 pub async fn add_patrol_route(
-    active_queues: &State<RwLock<HashMap<Uuid, Sender<Event>>>>,
+    active_queues: &State<StreamMap>,
     db: &State<MongoRepo>,
     robot_id: Uuid,
     new_route: Json<Route>,
