@@ -1,6 +1,7 @@
 import {
   Button,
   Card,
+  Col,
   Grid,
   Group,
   Image,
@@ -149,22 +150,29 @@ const RobotsManagement = () => {
               You can change the drive speed and rotation speed. Press and hold
               to moving robot, release to make it stop
             </Text>
-            <Text mb={"xs"} fw={600} mt={"xs"} c="dimmed">
-              Drive speed
-            </Text>
-            <Slider
-              value={driveSpeed}
-              onChange={setDriveSpeed}
-              onChangeEnd={setEndDriveSpeed}
-            />
-            <Text mb={"xs"} fw={600} mt={"xs"} c="dimmed">
-              Rotation speed
-            </Text>
-            <Slider
-              value={rotationSpeed}
-              onChange={setRotationSpeed}
-              onChangeEnd={setEndRotationSpeed}
-            />
+
+            <Grid>
+              <Col span={6}>
+                <Text mb={"xs"} fw={600} mt={"xs"} c="dimmed">
+                  Drive speed
+                </Text>
+                <Slider
+                  value={driveSpeed}
+                  onChange={setDriveSpeed}
+                  onChangeEnd={setEndDriveSpeed}
+                />
+              </Col>
+              <Col span={6}>
+                <Text mb={"xs"} fw={600} mt={"xs"} c="dimmed">
+                  Rotation speed
+                </Text>
+                <Slider
+                  value={rotationSpeed}
+                  onChange={setRotationSpeed}
+                  onChangeEnd={setEndRotationSpeed}
+                />
+              </Col>
+            </Grid>
             <Button
               onMouseDown={handleMouseDown}
               onMouseUp={handleMouseUp}
