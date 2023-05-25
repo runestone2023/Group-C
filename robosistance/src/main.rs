@@ -1,7 +1,7 @@
 #![feature(decl_macro)]
 use endpoints::robot::{establish_connection, hello, update_position};
 use endpoints::ui::{
-    add_patrol_route, get_position, get_routes, hello_test, register_robot, start_patrol,
+    add_patrol_route, get_position, get_routes, hello_test, register_robot, start_patrol, move_robot
 };
 use rocket::response::stream::Event;
 use rocket::tokio::sync::broadcast::Sender;
@@ -39,7 +39,7 @@ fn rocket() -> _ {
         .mount("/", routes![index, dist_dir])
         .mount(
             "/api/v1/ui",
-            routes![register_robot, get_position, get_routes, add_patrol_route],
+            routes![register_robot, get_position, get_routes, add_patrol_route, move_robot],
         )
         .mount(
             "/api/v1/robot",
