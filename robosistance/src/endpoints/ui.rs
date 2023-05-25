@@ -26,8 +26,8 @@ pub async fn get_all_data() {
 
 #[get("/data/position/<robot_id>")]
 pub fn get_position(
-    db: &State<MongoRepo>,
     robot_id: Uuid,
+    db: &State<MongoRepo>,
 ) -> Result<Json<Vec<MovementData>>, Status> {
     let bson_uuid = bson::Uuid::from_uuid_1(robot_id);
 
@@ -75,9 +75,9 @@ pub async fn move_robot(
         .and(Ok(()))
 }
 
-#[get("/command/patrol/<robot_id>")]
+#[get("/command/patrol/<robot_id>/<patrol_id>")]
 // TODO: Change robot_id to Uuid and add patrol route id to arguments
-pub async fn start_patrol(active_queues: &State<StreamMap>, robot_id: i32) -> Option<()> {
+pub async fn start_patrol(robot_id: Uuid, patrol_id: u64, active_queues: &State<StreamMap>) -> Option<()> {
     //! Endpoint that will tell the robot to start patrolling a specified path.
     let patrol = Command::Patrol(1);
     let _res = active_queues
@@ -96,10 +96,10 @@ pub async fn start_patrol(active_queues: &State<StreamMap>, robot_id: i32) -> Op
 )]
 // TODO: Change robot_id to Uuid
 pub async fn add_patrol_route(
-    active_queues: &State<StreamMap>,
-    db: &State<MongoRepo>,
     robot_id: Uuid,
     new_route: Json<Route>,
+    active_queues: &State<StreamMap>,
+    db: &State<MongoRepo>
 ) -> Result<(), Status> {
     //! Endpoint to add patrol routes
     db.save_route(new_route.commands.clone())
