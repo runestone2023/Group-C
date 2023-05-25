@@ -121,8 +121,8 @@ pub async fn get_routes(db: &State<MongoRepo>) -> Result<Json<Vec<Route>>, Statu
 #[get("/command/stop-patrol/<robot_id>")]
 // TODO: Change robot_id to Uuid and add patrol route id to arguments
 pub async fn stop_patrol(
+    robot_id: Uuid,
     active_queues: &State<RwLock<HashMap<Uuid, Sender<Event>>>>,
-    robot_id: i32,
 ) -> Option<()> {
     //! Endpoint that will tell the robot to start patrolling a specified path.
     let stop_cmd = Command::StopPatrol;
