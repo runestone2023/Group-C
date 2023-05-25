@@ -15,13 +15,13 @@ export const API_URLS = {
     }),
 
     startPatrol: (robotID: string) => ({
-      endPoint: `/api/v1/ui/command/patrol/${robotID}`,
+      endPoint: `/api/v1/robot/command/patrol/${robotID}`,
       method: "GET",
       header: HEADERS.header(),
     }),
 
     stopPatrol: (robotID: string) => ({
-      endPoint: `/api/v1/ui/command/stop-patrol/${robotID}`,
+      endPoint: `/api/v1/robot/command/stop-patrol/${robotID}`,
       method: "GET",
       header: HEADERS.header(),
     }),
@@ -31,7 +31,7 @@ export const API_URLS = {
       rotationSpeed: number,
       robotID: string
     ) => ({
-      endPoint: `/api/v1/ui/command/move/${robotID}?${driveSpeed}&${rotationSpeed}`,
+      endPoint: `/api/v1/ui/command/move/${robotID}?drive_speed=${driveSpeed}&rotation_speed=${rotationSpeed}`,
       method: "GET",
       header: HEADERS.header(),
     }),

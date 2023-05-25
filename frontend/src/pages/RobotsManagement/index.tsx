@@ -16,7 +16,8 @@ import { useCallApi } from "../../config/apis";
 import { notiType, renderNotification } from "../../utils/helpers";
 import demoRouteImg from "../../assets/demoroute.png";
 
-export const ROBOT_ID = "67e55044-10b1-426f-9247-bb680e5fe0c8";
+// export const ROBOT_ID = "z";
+export const ROBOT_ID = "1";
 
 const RobotsManagement = () => {
   const [robotID, setRobotID] = useState<string>();
@@ -87,9 +88,12 @@ const RobotsManagement = () => {
     }
   };
 
-  const ManuallyControlRobot = async () => {
+  const ManuallyControlRobot = async (
+    driveSpeed: number,
+    rotationSpeed: number
+  ) => {
     const api = API_URLS.ROBOT.manuallyControl(
-      endDriveSpeed,
+      driveSpeed,
       rotationSpeed,
       ROBOT_ID
     );
@@ -102,10 +106,17 @@ const RobotsManagement = () => {
       renderNotification("Send the command failed", notiType.ERROR);
     }
   };
+  const [isRunning, setIsRunning] = useState(false);
 
-  useEffect(() => {
-    ManuallyControlRobot();
-  }, [endDriveSpeed, endRotationSpeed]);
+  const handleMouseDown = () => {
+    setIsRunning(true);
+    ManuallyControlRobot(endDriveSpeed, endRotationSpeed);
+  };
+
+  const handleMouseUp = () => {
+    setIsRunning(false);
+    ManuallyControlRobot(0, 0);
+  };
 
   return (
     <>
@@ -135,10 +146,10 @@ const RobotsManagement = () => {
               Control Panel
             </Text>
             <Text c="dimmed">
-              You can change the drive speed to start moving the robot. Change
-              the speed to 0 to stop it.
+              You can change the drive speed and rotation speed. Press and hold
+              to moving robot, release to make it stop
             </Text>
-            <Text mb={"xs"} fw={600} mt={"md"} c="dimmed">
+            <Text mb={"xs"} fw={600} mt={"xs"} c="dimmed">
               Drive speed
             </Text>
             <Slider
@@ -146,7 +157,7 @@ const RobotsManagement = () => {
               onChange={setDriveSpeed}
               onChangeEnd={setEndDriveSpeed}
             />
-            <Text mb={"xs"} fw={600} mt={"md"} c="dimmed">
+            <Text mb={"xs"} fw={600} mt={"xs"} c="dimmed">
               Rotation speed
             </Text>
             <Slider
@@ -154,6 +165,18 @@ const RobotsManagement = () => {
               onChange={setRotationSpeed}
               onChangeEnd={setEndRotationSpeed}
             />
+            <Button
+              onMouseDown={handleMouseDown}
+              onMouseUp={handleMouseUp}
+              onMouseLeave={handleMouseUp}
+              onTouchStart={handleMouseDown}
+              onTouchEnd={handleMouseUp}
+              onTouchCancel={handleMouseUp}
+              miw={"100%"}
+              mt={"xs"}
+            >
+              {isRunning ? "Running" : "Press and hold to start"}
+            </Button>
           </Card>
         </Grid.Col>
         <Grid.Col span={1} />
@@ -172,7 +195,7 @@ const RobotsManagement = () => {
                 Start the patrol
               </Button>
               <Button
-                onClick={() => StartPatrol()}
+                onClick={() => StopPatrol()}
                 disabled={!_isStartPatrol}
                 leftIcon={<IconHandStop />}
               >
