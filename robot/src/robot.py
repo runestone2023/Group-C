@@ -44,8 +44,7 @@ class Robot:
         '''
         This event takes MovementSpeed and RotationSpeed which both can be negative for going backwards/rotating opposite direction.
         '''
-        movement_speed = event.json.get('MovementSpeed')
-        rotation_speed = event.json.get('RotationSpeed')
+        movement_speed, rotation_speed = event.json.get("Move")
 
         self.gyro_sensor.reset_angle(0)
 

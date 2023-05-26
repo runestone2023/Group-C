@@ -2,7 +2,7 @@
 use endpoints::robot::{establish_connection, get_all_routes, hello, update_position};
 use endpoints::ui::{
     add_patrol_route, get_position, get_routes, hello_test, register_robot, start_patrol,
-    stop_patrol,
+    stop_patrol, move_robot
 };
 use rocket::response::stream::Event;
 use rocket::tokio::sync::broadcast::Sender;
@@ -48,7 +48,8 @@ fn rocket() -> _ {
                 get_routes,
                 add_patrol_route,
                 stop_patrol,
-                start_patrol
+                start_patrol,
+                move_robot
             ],
         )
         .mount(
