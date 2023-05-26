@@ -15,13 +15,8 @@ const getColorByType = (type: notiType) => {
   }
 };
 
-export const renderNotification = (
-  title: string,
-  description: string,
-  type: notiType
-) => {
+export const renderNotification = (description: string, type: notiType) => {
   notifications.show({
-    title: title,
     message: description,
     color: getColorByType(type),
     withCloseButton: true,
