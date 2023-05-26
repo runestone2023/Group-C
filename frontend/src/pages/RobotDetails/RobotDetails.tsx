@@ -16,7 +16,7 @@ const RobotDetails = () => {
   const params = useParams();
   console.log(params);
   const [potralLoading, setPotralLoading] = useState(false);
-  const [patrolled, setPatrolled] = useState(false);
+  const [patrolled, setPatrolled] = useState(true);
   const fakeData = {
     id: "123",
     name: "Robot 1",
