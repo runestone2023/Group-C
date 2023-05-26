@@ -18,7 +18,7 @@ import { notiType, renderNotification } from "../../utils/helpers";
 import demoRouteImg from "../../assets/demoroute.png";
 
 // export const ROBOT_ID = "z";
-export const ROBOT_ID = "1";
+export const ROBOT_ID = "67e55044-10b1-426f-9247-bb680e5fe0c8";
 
 const RobotsManagement = () => {
   const [robotID, setRobotID] = useState<string>();
