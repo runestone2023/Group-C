@@ -54,6 +54,8 @@ pub enum Command {
     Patrol(usize), // As an id.
     Closed,
     Route,
+    MoveDistance(usize),
+    StopPatrol,
 }
 
 impl fmt::Display for Command {
@@ -68,6 +70,8 @@ impl fmt::Display for Command {
             Patrol(_) => write!(f, "Patrol"),
             Closed => write!(f, "Closed"),
             Route => write!(f, "Route"),
+            MoveDistance(_) => write!(f, "MoveDistance"),
+            StopPatrol => write!(f, "StopPatrol"),
         }
     }
 }

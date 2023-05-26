@@ -76,17 +76,18 @@ pub async fn move_robot(
 }
 
 #[get("/command/patrol/<robot_id>/<patrol_id>")]
-// TODO: Change robot_id to Uuid and add patrol route id to arguments
 pub async fn start_patrol(robot_id: Uuid, patrol_id: u64, active_queues: &State<StreamMap>) -> Option<()> {
     //! Endpoint that will tell the robot to start patrolling a specified path.
-    let patrol = Command::Patrol(1);
+    let patrol = Command::Patrol(0);
+    
     let _res = active_queues
         .read()
         .unwrap()
         // TODO: Get the robot id given in the request instead
-        .get(&TEST_API_KEY)?
+        .get(&TEST_API_KEY)
+        .ok_or(Status::InternalServerError)?
         .send(Event::json(&patrol).event(patrol.to_string()));
-    Some(()) // FIXME: Handle errors better
+    Ok(()) // FIXME: Handle errors better
 }
 
 #[post(
@@ -124,4 +125,21 @@ pub async fn get_routes(db: &State<MongoRepo>) -> Result<Json<Vec<Route>>, Statu
         Ok(routes) => Ok(Json(routes)),
         Err(_) => Err(Status::InternalServerError),
     }
+}
+
+#[get("/command/stop-patrol/<robot_id>")]
+// TODO: Change robot_id to Uuid and add patrol route id to arguments
+pub async fn stop_patrol(
+    robot_id: Uuid,
+    active_queues: &State<RwLock<HashMap<Uuid, Sender<Event>>>>,
+) -> Option<()> {
+    //! Endpoint that will tell the robot to start patrolling a specified path.
+    let stop_cmd = Command::StopPatrol;
+    let _res = active_queues
+        .read()
+        .unwrap()
+        // TODO: Get the robot id given in the request instead
+        .get(&TEST_API_KEY)?
+        .send(Event::json(&stop_cmd).event(stop_cmd.to_string()));
+    Some(()) // FIXME: Handle errors better
 }
