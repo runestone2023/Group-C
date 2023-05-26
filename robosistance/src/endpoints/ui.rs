@@ -76,7 +76,7 @@ pub async fn move_robot(
 }
 
 #[get("/command/patrol/<robot_id>/<patrol_id>")]
-pub async fn start_patrol(robot_id: Uuid, patrol_id: u64, active_queues: &State<StreamMap>) -> Option<()> {
+pub async fn start_patrol(robot_id: Uuid, patrol_id: u64, active_queues: &State<StreamMap>) -> Result<(), Status> {
     //! Endpoint that will tell the robot to start patrolling a specified path.
     let patrol = Command::Patrol(0);
     
