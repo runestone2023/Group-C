@@ -46,6 +46,7 @@ fn rocket() -> _ {
                 register_robot,
                 get_position,
                 get_routes,
+                hello_test,
                 add_patrol_route,
                 stop_patrol,
                 start_patrol,
@@ -56,9 +57,6 @@ fn rocket() -> _ {
             "/api/v1/robot",
             routes![
                 update_position,
-                register_robot,
-                hello_test,
-                start_patrol,
                 establish_connection,
                 get_all_routes
             ],

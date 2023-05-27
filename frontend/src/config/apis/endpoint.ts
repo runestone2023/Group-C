@@ -3,7 +3,7 @@ import { HEADERS } from "./header";
 export const API_URLS = {
   ROBOT: {
     sayHello: () => ({
-      endPoint: "/api/v1/robot/hello",
+      endPoint: "/api/v1/ui/command/hello",
       method: "GET",
       header: HEADERS.header(),
     }),
@@ -21,7 +21,7 @@ export const API_URLS = {
     }),
 
     stopPatrol: (robotID: string) => ({
-      endPoint: `/api/v1/robot/command/stop-patrol/${robotID}`,
+      endPoint: `/api/v1/ui/command/stop-patrol/${robotID}`,
       method: "GET",
       header: HEADERS.header(),
     }),
