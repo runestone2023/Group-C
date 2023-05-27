@@ -9,13 +9,21 @@ import {
   Stack,
   Text,
 } from "@mantine/core";
-import { IconHandStop, IconRadar, IconRun } from "@tabler/icons-react";
-import { useEffect, useState } from "react";
-import robotImage from "../../assets/robot.jpg";
-import { API_URLS } from "../../config/apis/endpoint";
-import { useCallApi } from "../../config/apis";
-import { notiType, renderNotification } from "../../utils/helpers";
+import {
+  IconArrowDown,
+  IconArrowLeft,
+  IconArrowRight,
+  IconArrowUp,
+  IconHandStop,
+  IconRadar,
+  IconRun,
+} from "@tabler/icons-react";
+import { useState } from "react";
 import demoRouteImg from "../../assets/demoroute.png";
+import robotImage from "../../assets/robot.jpg";
+import { useCallApi } from "../../config/apis";
+import { API_URLS } from "../../config/apis/endpoint";
+import { notiType, renderNotification } from "../../utils/helpers";
 
 // export const ROBOT_ID = "z";
 export const ROBOT_ID = "67e55044-10b1-426f-9247-bb680e5fe0c8";
@@ -109,12 +117,12 @@ const RobotsManagement = () => {
   };
   const [isRunning, setIsRunning] = useState(false);
 
-  const handleMouseDown = () => {
+  const onPressBtn = (driveSpeed: number, rotationSpeed: number) => {
     setIsRunning(true);
-    ManuallyControlRobot(endDriveSpeed, endRotationSpeed);
+    ManuallyControlRobot(driveSpeed, rotationSpeed);
   };
 
-  const handleMouseUp = () => {
+  const onRealeaseBtn = () => {
     setIsRunning(false);
     ManuallyControlRobot(0, 0);
   };
@@ -161,8 +169,6 @@ const RobotsManagement = () => {
                   onChange={setDriveSpeed}
                   onChangeEnd={setEndDriveSpeed}
                 />
-              </Col>
-              <Col span={6}>
                 <Text mb={"xs"} fw={600} mt={"xs"} c="dimmed">
                   Rotation speed
                 </Text>
@@ -172,8 +178,40 @@ const RobotsManagement = () => {
                   onChangeEnd={setEndRotationSpeed}
                 />
               </Col>
+              <Col span={6}>
+                <Stack h={"100%"} justify="center">
+                  <Group position="center">
+                    <Button
+                      onMouseDown={() => onPressBtn(endDriveSpeed, 0)}
+                      onMouseUp={() => onRealeaseBtn()}
+                    >
+                      <IconArrowUp />
+                    </Button>
+                  </Group>
+                  <Group position="center">
+                    <Button
+                      onMouseDown={() => onPressBtn(0, -endRotationSpeed)}
+                      onMouseUp={() => onRealeaseBtn()}
+                    >
+                      <IconArrowLeft />
+                    </Button>
+                    <Button
+                      onMouseDown={() => onPressBtn(-endDriveSpeed, 0)}
+                      onMouseUp={() => onRealeaseBtn()}
+                    >
+                      <IconArrowDown />
+                    </Button>
+                    <Button
+                      onMouseDown={() => onPressBtn(0, endRotationSpeed)}
+                      onMouseUp={() => onRealeaseBtn()}
+                    >
+                      <IconArrowRight />
+                    </Button>
+                  </Group>
+                </Stack>
+              </Col>
             </Grid>
-            <Button
+            {/* <Button
               onMouseDown={handleMouseDown}
               onMouseUp={handleMouseUp}
               onMouseLeave={handleMouseUp}
@@ -184,7 +222,7 @@ const RobotsManagement = () => {
               mt={"xs"}
             >
               {isRunning ? "Running" : "Press and hold to start"}
-            </Button>
+            </Button> */}
           </Card>
         </Grid.Col>
         <Grid.Col span={1} />
