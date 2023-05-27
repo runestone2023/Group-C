@@ -1,5 +1,5 @@
 #![feature(decl_macro)]
-use endpoints::robot::{establish_connection, get_all_routes, hello, update_position};
+use endpoints::robot::{establish_connection, get_all_routes, update_position};
 use endpoints::ui::{
     add_patrol_route, get_position, get_routes, hello_test, register_robot, start_patrol,
     stop_patrol, move_robot
@@ -59,7 +59,6 @@ fn rocket() -> _ {
                 register_robot,
                 hello_test,
                 start_patrol,
-                hello,
                 establish_connection,
                 get_all_routes
             ],
