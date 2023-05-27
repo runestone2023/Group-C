@@ -59,17 +59,6 @@ pub fn update_position(
     }
 }
 
-#[get("/hello")]
-pub fn hello() -> EventStream![] {
-    EventStream! {
-        let mut timer = interval(Duration::from_secs(5));
-        loop {
-            yield Event::data("").event(Command::Hello.to_string());
-            timer.tick().await;
-        }
-    }
-}
-
 #[get("/command/patrol/all")]
 pub async fn get_all_routes(
     active_queues: &State<RwLock<HashMap<Uuid, Sender<Event>>>>,

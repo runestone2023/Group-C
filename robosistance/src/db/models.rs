@@ -49,7 +49,7 @@ pub struct Route {
 pub enum Command {
     Hello,
     Rotate(f32),
-    Move(u64, f32),
+    Move(i64, f32),
     Beep,
     Patrol(usize), // As an id.
     Closed,
