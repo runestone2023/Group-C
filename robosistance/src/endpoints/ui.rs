@@ -58,7 +58,7 @@ pub async fn hello_test(active_queues: &State<StreamMap>) -> Option<()> {
 #[get("/command/move/<robot_id>?<drive_speed>&<rotation_speed>")]
 pub async fn move_robot(
     robot_id: Uuid,
-    drive_speed: u64,
+    drive_speed: i64,
     rotation_speed: f32,
     active_queues: &State<StreamMap>,
 ) -> Result<(), Status> {
