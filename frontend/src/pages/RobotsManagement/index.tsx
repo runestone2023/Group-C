@@ -27,6 +27,7 @@ import { notiType, renderNotification } from "../../utils/helpers";
 
 // export const ROBOT_ID = "z";
 export const ROBOT_ID = "67e55044-10b1-426f-9247-bb680e5fe0c8";
+export const PATROL_ID = "0";
 
 const RobotsManagement = () => {
   const [robotID, setRobotID] = useState<string>();
@@ -66,7 +67,7 @@ const RobotsManagement = () => {
 
   const StartPatrol = async () => {
     const { response, error } = await useCallApi(
-      API_URLS.ROBOT.startPatrol(ROBOT_ID)
+      API_URLS.ROBOT.startPatrol(ROBOT_ID, PATROL_ID)
     );
 
     if (!error && response?.status == 200) {

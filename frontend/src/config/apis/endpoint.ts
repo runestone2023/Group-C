@@ -14,8 +14,8 @@ export const API_URLS = {
       header: HEADERS.header(),
     }),
 
-    startPatrol: (robotID: string) => ({
-      endPoint: `/api/v1/robot/command/patrol/${robotID}`,
+    startPatrol: (robotID: string, patrolID: string) => ({
+      endPoint: `/api/v1/ui/command/patrol/${robotID}/${patrolID}`,
       method: "GET",
       header: HEADERS.header(),
     }),
