@@ -35,6 +35,8 @@ class Robot:
     async def obstacle_in_front(self):
         return self.ultrasonic_sensor.distance() > 300
 
+    async def beep(self, _):
+        self.ev3.speaker.beep()
 
     def stop_moving(self, event):
         uasyncio.get_event_loop().stop()

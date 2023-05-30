@@ -21,6 +21,7 @@ def main():
     es.add_event_listener('Move', robot.move)
     es.add_event_listener('StopPatrol', robot.stop_moving)
     es.add_event_listener('MoveDistance', robot.move_distance)
+    es.add_event_listener('Hello', robot.beep)
 
     loop = uasyncio.get_event_loop()
     loop.create_task(get_routes())
